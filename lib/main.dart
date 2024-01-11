@@ -1,3 +1,4 @@
+import 'package:bidsure_project/authentication/loginScreen.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _MyAppState extends State<MyApp> {
         splash: 'images/splashlogo.png',
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: Palette.darkMainColor,
-        nextScreen: const HomePage(),
+        nextScreen: const LogInPage(),
       ),
     );
   }
