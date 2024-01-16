@@ -10,6 +10,6 @@ class CreateAuctionPage extends StatefulWidget {
 class _CreateAuctionPageState extends State<CreateAuctionPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold();
   }
 }
