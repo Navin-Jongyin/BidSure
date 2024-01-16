@@ -25,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "Profile Page",
+              "User Profile",
               style: GoogleFonts.montserratAlternates(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -47,6 +47,35 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icons.settings,
                 color: Palette.greyColor,
               ))
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            child: Align(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(25),
+                    alignment: Alignment.center,
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: Palette.darkMainColor,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                  Text(
+                    "Name Surename",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkMainColor),
+                  )
+                ],
+              ),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
