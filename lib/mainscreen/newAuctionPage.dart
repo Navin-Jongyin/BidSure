@@ -1,4 +1,3 @@
-import 'package:bidsure_project/config/palette.dart';
 import 'package:flutter/material.dart';
 
 class CreateAuctionPage extends StatefulWidget {
@@ -11,8 +10,8 @@ class CreateAuctionPage extends StatefulWidget {
 class _CreateAuctionPageState extends State<CreateAuctionPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Palette.darkMainColor,
+    return Scaffold(
+      appBar: AppBar(),
     );
   }
 }
