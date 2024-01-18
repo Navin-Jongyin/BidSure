@@ -1,5 +1,6 @@
 import 'package:bidsure_project/config/bottomNavBar.dart';
 import 'package:bidsure_project/config/palette.dart';
+import 'package:bidsure_project/mainscreen/newAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/profilePage.dart';
 import 'package:bidsure_project/mainscreen/searchPage.dart';
 import 'package:bidsure_project/mainscreen/walletPage.dart';
@@ -83,7 +84,7 @@ class _HomePageState extends State<HomePage>
             Navigator.of(context).pushReplacement(
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    const WalletPage(),
+                    const CreateAuctionPage(),
               ),
             );
           } else if (index == 3) {
