@@ -71,11 +71,123 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         color: Palette.darkMainColor),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            child: Align(
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align rows in the center horizontally
+                children: [
+                  const SizedBox(width: 80),
+
+                  const ImageIcon(AssetImage("icons/auction.png"), size: 40),
+                  const SizedBox(width: 30),
+                  Text(
+                    "My Auction",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.darkMainColor,
+                    ),
+                  ),
+
+                  // Icon(Icons.navigate_next_sharp, color: Colors.redAccent),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Container(
+            child: Align(
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align rows in the center horizontally
+                children: [
+                  const SizedBox(width: 80),
+                  const ImageIcon(
+                    AssetImage("icons/payment.png"),
+                    size: 40,
+                  ),
+                  const SizedBox(width: 30),
+
+                  Text(
+                    "Payment",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.darkMainColor,
+                    ),
+                  ),
+
+                  // Icon(Icons.navigate_next_sharp, color: Colors.redAccent),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Container(
+            child: Align(
+              child: Row(
+                children: [
+                  const SizedBox(width: 80),
+                  const ImageIcon(AssetImage("icons/history.png"), size: 40),
+                  const SizedBox(width: 30),
+                  Text(
+                    "History",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.darkMainColor,
+                    ),
                   )
                 ],
               ),
             ),
           ),
+          SizedBox(height: 20),
+          Container(
+            child: Align(
+              child: Row(
+                children: [
+                  const SizedBox(width: 80),
+                  const ImageIcon(AssetImage("icons/shipping.png"), size: 40),
+                  const SizedBox(width: 30),
+                  Text(
+                    "Shipping Address",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.darkMainColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 80),
+          Container(
+            width: 150.0,
+            child: FloatingActionButton(
+                onPressed: (){},
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              backgroundColor: Palette.redMainColor,
+              child: Text(
+                "LOGOUT",
+                style: GoogleFonts.montserrat(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
+              ),
+
+            ),
+          )
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
