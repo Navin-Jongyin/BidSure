@@ -173,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             width: 150.0,
             child: FloatingActionButton(
-                onPressed: (){},
+              onPressed: () {},
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -185,7 +185,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.w500,
                     color: Colors.white),
               ),
-
             ),
           )
         ],
