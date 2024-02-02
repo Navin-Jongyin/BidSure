@@ -4,7 +4,9 @@ import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:bidsure_project/mainscreen/newAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/searchPage.dart';
 import 'package:bidsure_project/mainscreen/walletPage.dart';
+import 'package:bidsure_project/mainscreen/myAuctionPage.dart';
 import 'package:bidsure_project/settingscreen/settingsPage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -79,99 +81,110 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          Container(
-            child: Align(
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align rows in the center horizontally
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: ListView(
                 children: [
-                  const SizedBox(width: 80),
-
-                  const ImageIcon(AssetImage("icons/auction.png"), size: 40),
-                  const SizedBox(width: 30),
-                  Text(
-                    "My Auction",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Palette.darkMainColor,
+                  ListTile(
+                    leading: ImageIcon(
+                      AssetImage("icons/auction.png"),
+                      size: 35,
                     ),
+                    title: Text("My Auction",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.darkMainColor,
+                        )),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const MyAuctionPage(),
+                        ),
+                      );
+                    },
                   ),
+                  ListTile(
+                    leading: ImageIcon(
+                      AssetImage("icons/payment.png"),
+                      size: 35,
+                    ),
+                    title: Text("Payment",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.darkMainColor,
+                        )),
+                    trailing: Icon(Icons.arrow_forward_ios),
 
-                  // Icon(Icons.navigate_next_sharp, color: Colors.redAccent),
+                    // onTap: (){
+                    //   Navigator.of(context).pushReplacement(
+                    //     PageRouteBuilder(
+                    //       pageBuilder: (context, animation, secondaryAnimation) =>
+                    //       const MyAuctionPage(),
+                    //     ),
+                    //   );
+                    //
+                    // },
+                  ),
+                  ListTile(
+                    leading: ImageIcon(
+                      AssetImage("icons/history.png"),
+                      size: 35,
+                    ),
+                    title: Text("History",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.darkMainColor,
+                        )),
+                    trailing: Icon(Icons.arrow_forward_ios),
+
+                    // onTap: (){
+                    //   Navigator.of(context).pushReplacement(
+                    //     PageRouteBuilder(
+                    //       pageBuilder: (context, animation, secondaryAnimation) =>
+                    //       const MyAuctionPage(),
+                    //     ),
+                    //   );
+                    //
+                    // },
+                  ),
+                  ListTile(
+                    leading: ImageIcon(
+                      AssetImage("icons/shipping.png"),
+                      size: 35,
+                    ),
+                    title: Text("Shipping Address",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.darkMainColor,
+                        )),
+                    trailing: Icon(Icons.arrow_forward_ios),
+
+                    // onTap: (){
+                    //   Navigator.of(context).pushReplacement(
+                    //     PageRouteBuilder(
+                    //       pageBuilder: (context, animation, secondaryAnimation) =>
+                    //       const MyAuctionPage(),
+                    //     ),
+                    //   );
+                    //
+                    // },
+                  ),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Container(
-            child: Align(
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align rows in the center horizontally
-                children: [
-                  const SizedBox(width: 80),
-                  const ImageIcon(
-                    AssetImage("icons/payment.png"),
-                    size: 40,
-                  ),
-                  const SizedBox(width: 30),
-
-                  Text(
-                    "Payment",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Palette.darkMainColor,
-                    ),
-                  ),
-
-                  // Icon(Icons.navigate_next_sharp, color: Colors.redAccent),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            child: Align(
-              child: Row(
-                children: [
-                  const SizedBox(width: 80),
-                  const ImageIcon(AssetImage("icons/history.png"), size: 40),
-                  const SizedBox(width: 30),
-                  Text(
-                    "History",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Palette.darkMainColor,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            child: Align(
-              child: Row(
-                children: [
-                  const SizedBox(width: 80),
-                  const ImageIcon(AssetImage("icons/shipping.png"), size: 40),
-                  const SizedBox(width: 30),
-                  Text(
-                    "Shipping Address",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Palette.darkMainColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 80),
+          SizedBox(height: 30),
           Container(
             width: 150.0,
+            margin: EdgeInsets.only(bottom: 50),
             child: FloatingActionButton(
               onPressed: () {},
               shape: RoundedRectangleBorder(
@@ -186,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: Colors.white),
               ),
             ),
-          )
+          ),
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
