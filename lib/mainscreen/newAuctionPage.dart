@@ -15,6 +15,7 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
   String bidIncrease = '';
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+  bool switchValue = false; // Track the state of the switch
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +45,22 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                 color: Palette.redMainColor,
                 fontWeight: FontWeight.bold,
               ),
-            )
+            ),
           ],
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: CupertinoSwitch(
+              value: switchValue,
+              onChanged: (value) {
+                setState(() {
+                  switchValue = value;
+                });
+              },
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -143,6 +157,63 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                 ],
               ),
             ),
+            if (switchValue) // Conditionally display based on switch value
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          labelText: "Date",
+                          labelStyle: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Palette.redMainColor,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          suffixIcon: const Icon(Icons.attach_money),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          if (value.startsWith('0')) {
+                            if (value.length > 1 && value.length != 0) {
+                              setState(() {
+                                bidIncrease =
+                                    value.replaceAll(RegExp('^0+'), '');
+                              });
+                            }
+                          } else {
+                            bidIncrease = value;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          labelText: "Starting Time",
+                          labelStyle: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Palette.redMainColor,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          suffixIcon: const Icon(Icons.attach_money),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
