@@ -48,19 +48,22 @@ class _CreateAuctionPageState extends State<MyAuctionPage>
         backgroundColor: Palette.whiteColor,
         title: Row(
           children: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Palette.darkMainColor,
+            InkWell(
+              child: const Icon(
+                Icons.arrow_back,
+                color: Palette.greyColor,
               ),
-              onPressed: () {
+              onTap: () {
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                    const HomePage(),
+                        const ProfilePage(),
                   ),
-                ); // Close the current page
+                );
               },
+            ),
+            SizedBox(
+              width: 10,
             ),
             Text(
               "My Auction",
@@ -77,11 +80,11 @@ class _CreateAuctionPageState extends State<MyAuctionPage>
           indicatorColor: Colors.transparent,
           labelColor: Palette.redMainColor,
           unselectedLabelColor: Palette.greyColor,
-          labelStyle: GoogleFonts.montserratAlternates(
+          labelStyle: GoogleFonts.montserrat(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
-          unselectedLabelStyle: GoogleFonts.montserratAlternates(
+          unselectedLabelStyle: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.bold,
           ),
@@ -94,167 +97,6 @@ class _CreateAuctionPageState extends State<MyAuctionPage>
             ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Content for "Create Live Auction" tab
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _itemNameController,
-                    maxLength: maxNameLimit,
-                    onChanged: (text) {
-                      setState(() {}); // Update UI on text change
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      label: const Text("Item Name"),
-                      labelStyle: GoogleFonts.montserrat(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      floatingLabelStyle: GoogleFonts.montserrat(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: _itemDescriptionController,
-                    minLines: 5,
-                    maxLines: 5,
-                    maxLength: maxCharacterLimit,
-                    onChanged: (text) {
-                      setState(() {}); // Update UI on text change
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      label: const Text("Item Description"),
-                      labelStyle: GoogleFonts.montserrat(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      counterText:
-                      '${_itemDescriptionController.text.length}/$maxCharacterLimit',
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 170,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            label: Text("Starting Price"),
-                            labelStyle: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 170,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            label: Text("Bid Increase"),
-                            labelStyle: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 170,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            label: Text("Duration"),
-                            labelStyle: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 170,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            label: Text("Start Time"),
-                            labelStyle: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 15, 20, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Add Image"),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        height: 120,
-                        width: 120,
-                        color: Palette.darkMainColor,
-                      ),
-                    ],
-                  ),
-                ),
-                // Container(
-                //   child: FloatingActionButton(
-                //     onPressed: () {},
-                //   ),
-                // )
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
