@@ -1,5 +1,4 @@
 import 'package:bidsure_project/config/palette.dart';
-import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:bidsure_project/mainscreen/profilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,14 +14,8 @@ class _CreateAuctionPageState extends State<MyAuctionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // List of titles corresponding to each tab
-  List<String> _tabTitles = ["Live Auction", "Online Auction"];
+  final List<String> _tabTitles = ["Live Auction", "Online Auction"];
 
-  // Text editing controllers for the form fields
-  TextEditingController _itemNameController = TextEditingController();
-  TextEditingController _itemDescriptionController = TextEditingController();
-
-  // Maximum character limit
   int maxCharacterLimit = 250;
   int maxNameLimit = 25;
 
@@ -62,7 +55,7 @@ class _CreateAuctionPageState extends State<MyAuctionPage>
                 );
               },
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Text(
