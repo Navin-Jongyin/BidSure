@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(scaffoldBackgroundColor: Palette.whiteColor),
       home: AnimatedSplashScreen(
         duration: 2000,
         splash: 'images/splashlogo.png',
