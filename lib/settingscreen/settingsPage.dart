@@ -21,8 +21,8 @@ class _SettingsPageState extends State<SettingsPage> {
         backgroundColor: Palette.whiteColor,
         title: Row(
           children: [
-            IconButton(
-              onPressed: () {
+            InkWell(
+              onTap: () {
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
@@ -30,20 +30,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
               },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Palette.darkMainColor,
-                size: 25,
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.arrow_back,
+                    color: Palette.greyColor,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    "Settings",
+                    style: GoogleFonts.montserratAlternates(
+                      fontSize: 20,
+                      color: Palette.redMainColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Text(
-              "Settings",
-              style: GoogleFonts.montserratAlternates(
-                fontSize: 20,
-                color: Palette.redMainColor,
-                fontWeight: FontWeight.bold,
-              ),
-            )
           ],
         ),
       ),

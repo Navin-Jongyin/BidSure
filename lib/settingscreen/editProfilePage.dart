@@ -17,10 +17,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: Palette.whiteColor,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            IconButton(
-              onPressed: () {
+            InkWell(
+              onTap: () {
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
@@ -28,18 +27,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 );
               },
-              icon: const Icon(
+              child: Icon(
                 Icons.arrow_back,
-                color: Palette.darkMainColor,
+                color: Colors.grey,
               ),
-            ),
-            Text(
-              "Edit Profile",
-              style: GoogleFonts.montserratAlternates(
-                  fontSize: 20,
-                  color: Palette.redMainColor,
-                  fontWeight: FontWeight.bold),
-            ),
+            )
           ],
         ),
       ),
@@ -57,7 +49,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
           ),
-
           Container(
             margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
@@ -79,7 +70,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
           ),
-
           Container(
             margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
@@ -101,7 +91,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
           ),
-
           Container(
             margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
@@ -138,9 +127,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 50 , horizontal: 10),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 50, horizontal: 10),
                   ),
                 ),
               ],
