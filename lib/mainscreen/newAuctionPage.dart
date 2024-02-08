@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:flutter/material.dart';
