@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Palette.darkMainColor, () {})
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +15,6 @@ class CreateAuctionPage extends StatefulWidget {
 
 class _CreateAuctionPageState extends State<CreateAuctionPage> {
   String bidIncrease = '';
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
   bool switchValue = false; // Track the state of the switch
 
   @override
@@ -25,14 +25,14 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
         title: Row(
           children: [
             IconButton(
-              onPressed: (() {
+              onPressed: () {
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
                         const HomePage(),
                   ),
                 );
-              }),
+              },
               icon: const Icon(
                 Icons.arrow_back,
                 color: Palette.darkMainColor,
@@ -48,22 +48,10 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: CupertinoSwitch(
-              value: switchValue,
-              onChanged: (value) {
-                setState(() {
-                  switchValue = value;
-                });
-              },
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               margin: const EdgeInsets.fromLTRB(20, 30, 20, 10),
@@ -157,64 +145,149 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                 ],
               ),
             ),
-            if (switchValue) // Conditionally display based on switch value
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          labelText: "Date",
-                          labelStyle: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Palette.redMainColor,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          suffixIcon: const Icon(Icons.attach_money),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        labelText: "Price",
+                        labelStyle: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: switchValue
+                              ? Colors.grey
+                              : Palette
+                                  .redMainColor, // Change color to grey when switch is on
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        suffixIcon: const Icon(Icons.attach_money),
                       ),
+                      enabled:
+                          !switchValue, // Disable text field when switch is on
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          if (value.startsWith('0')) {
-                            if (value.length > 1 && value.length != 0) {
-                              setState(() {
-                                bidIncrease =
-                                    value.replaceAll(RegExp('^0+'), '');
-                              });
-                            }
-                          } else {
-                            bidIncrease = value;
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        if (value.startsWith('0')) {
+                          if (value.length > 1 && value.length != 0) {
+                            setState(() {
+                              bidIncrease = value.replaceAll(RegExp('^0+'), '');
+                            });
                           }
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          labelText: "Starting Time",
-                          labelStyle: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Palette.redMainColor,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          suffixIcon: const Icon(Icons.attach_money),
+                        } else {
+                          bidIncrease = value;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        labelText: "Bid Increase",
+                        labelStyle: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: switchValue
+                              ? Colors.grey
+                              : Palette
+                                  .redMainColor, // Change color to grey when switch is on
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        suffixIcon: const Icon(Icons.attach_money),
+                      ),
+                      enabled:
+                          !switchValue, // Disable text field when switch is on
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Live Stream Auction",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkMainColor),
+                  ),
+                  const SizedBox(width: 10),
+                  CupertinoSwitch(
+                    value: switchValue,
+                    onChanged: (value) {
+                      setState(() {
+                        switchValue = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(0, 15, 15, 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      "Add Item Image",
+                      style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.redMainColor),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      print("tap");
+                    },
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      color: Colors.grey.shade400,
+                      child: const Center(
+                        child: Icon(
+                          Icons.add,
+                          size: 40,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  )
+                ],
               ),
+            )
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 100,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+        color: Colors.transparent,
+        child: FloatingActionButton(
+          onPressed: () {},
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Palette.redMainColor,
+          child: Text(
+            "Start Auction",
+            style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Palette.whiteColor),
+          ),
         ),
       ),
     );
