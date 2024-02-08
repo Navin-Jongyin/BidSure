@@ -108,7 +108,7 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                           color: Palette.redMainColor,
                         ),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Icon(Icons.attach_money),
+                        suffixIcon: const Icon(Icons.currency_bitcoin),
                       ),
                     ),
                   ),
@@ -138,7 +138,7 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                           color: Palette.redMainColor,
                         ),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Icon(Icons.attach_money),
+                        suffixIcon: const Icon(Icons.currency_bitcoin),
                       ),
                     ),
                   ),
@@ -155,20 +155,16 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        labelText: "Price",
+                        labelText: "Date",
                         labelStyle: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: switchValue
-                              ? Colors.grey
-                              : Palette
-                                  .redMainColor, // Change color to grey when switch is on
+                          color:
+                              switchValue ? Colors.grey : Palette.redMainColor,
                         ),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Icon(Icons.attach_money),
                       ),
-                      enabled:
-                          !switchValue, // Disable text field when switch is on
+                      enabled: !switchValue,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -190,7 +186,7 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        labelText: "Bid Increase",
+                        labelText: "Time",
                         labelStyle: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -200,7 +196,6 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
                                   .redMainColor, // Change color to grey when switch is on
                         ),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Icon(Icons.attach_money),
                       ),
                       enabled:
                           !switchValue, // Disable text field when switch is on
