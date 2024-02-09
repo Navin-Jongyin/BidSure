@@ -27,10 +27,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 );
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back,
-                color: Colors.grey,
+                color: Palette.darkMainColor,
               ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Edit Profile",
+              style: GoogleFonts.montserratAlternates(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Palette.redMainColor),
             )
           ],
         ),
@@ -39,7 +49,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         children: [
           Align(
             child: Container(
-              margin: EdgeInsets.all(25),
+              margin: const EdgeInsets.all(25),
               alignment: Alignment.center,
               height: 100,
               width: 100,
@@ -50,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
               children: [
                 TextField(
@@ -71,7 +81,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
               children: [
                 TextField(
@@ -92,7 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
               children: [
                 TextField(
@@ -113,7 +123,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: Column(
               children: [
                 TextField(
@@ -128,14 +138,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 50, horizontal: 10),
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(20),
+        child: FloatingActionButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Palette.darkMainColor,
+                content: Text(
+                  "Information saved",
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Palette.redMainColor,
+          child: Text(
+            "Save",
+            style: GoogleFonts.montserrat(
+                fontSize: 18,
+                color: Palette.whiteColor,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }

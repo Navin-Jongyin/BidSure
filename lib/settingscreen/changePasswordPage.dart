@@ -54,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.fromLTRB(20, 40, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 40, 20, 15),
             child: TextFormField(
               controller: currentPasswordController,
               onChanged: (value) {
@@ -80,7 +80,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 15),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
             child: TextFormField(
               controller: newPasswordController,
               onChanged: (value) {
@@ -106,7 +106,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: TextFormField(
               controller: confirmNewPasswordController,
               onChanged: (value) {
@@ -134,7 +134,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ],
       ),
       bottomNavigationBar: Container(
-        margin: EdgeInsets.fromLTRB(20, 0, 20, 25),
+        margin: const EdgeInsets.fromLTRB(20, 0, 20, 25),
         child: FloatingActionButton(
           backgroundColor: Palette.redMainColor,
           shape:
@@ -143,9 +143,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           child: Text(
             "Save",
             style: GoogleFonts.montserrat(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Palette.whiteColor),
           ),
         ),
       ),

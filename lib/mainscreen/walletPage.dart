@@ -4,6 +4,7 @@ import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:bidsure_project/mainscreen/newAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/profilePage.dart';
 import 'package:bidsure_project/mainscreen/searchPage.dart';
+import 'package:bidsure_project/mainscreen/topUpPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -100,7 +101,14 @@ class _WalletPageState extends State<WalletPage> {
                 width: 200,
                 child: FloatingActionButton(
                   backgroundColor: Palette.redMainColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const TopUpPage(),
+                      ),
+                    );
+                  },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
