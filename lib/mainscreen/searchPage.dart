@@ -44,6 +44,47 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                prefixIcon: Icon(Icons.search),
+                hintText: "Search",
+              ),
+            ),
+            Flexible(
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [
+                  Container(
+                    height: 100,
+                    margin: EdgeInsets.only(top: 20),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
+                  // SizedBox(height: 20), // Add some spacing between the two rows
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: 1,
         onTap: (index) {
@@ -83,4 +124,28 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+
+  Widget buildCard() => Container(
+        width: 100,
+        height: 100,
+        color: Palette.whiteColor,
+        child: Column(
+          children: [
+            Image.asset(
+              "icons/addition.png",
+              width: 50,
+              height: 50,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Item",
+              style: GoogleFonts.montserrat(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Palette.redMainColor,
+              ),
+            )
+          ],
+        ),
+      );
 }
