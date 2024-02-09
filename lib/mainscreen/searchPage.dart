@@ -45,16 +45,27 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 hintText: "Search",
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: Text(
+                "Search by Category",
+                style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    color: Palette.redMainColor,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             Flexible(
@@ -63,37 +74,22 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   Container(
                     height: 100,
-                    margin: EdgeInsets.only(top: 20),
+                    margin: const EdgeInsets.only(top: 20),
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
                         buildCard(),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 5),
                         buildCard(),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 5),
                         buildCard(),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 5),
                         buildCard(),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 5),
                       ],
                     ),
                   ),
-                  Container(
-                    height: 100,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        buildCard(),
-                        SizedBox(width: 10),
-                        buildCard(),
-                        SizedBox(width: 10),
-                        buildCard(),
-                        SizedBox(width: 10),
-                        buildCard(),
-                        SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
+
                   // SizedBox(height: 20), // Add some spacing between the two rows
                 ],
               ),
