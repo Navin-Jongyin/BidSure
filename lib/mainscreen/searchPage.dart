@@ -78,6 +78,22 @@ class _SearchPageState extends State<SearchPage> {
                       ],
                     ),
                   ),
+                  Container(
+                    height: 100,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                        buildCard(),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
                   // SizedBox(height: 20), // Add some spacing between the two rows
                 ],
               ),
