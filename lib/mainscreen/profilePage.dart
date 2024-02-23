@@ -5,6 +5,7 @@ import 'package:bidsure_project/mainscreen/myAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/newAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/searchPage.dart';
 import 'package:bidsure_project/mainscreen/walletPage.dart';
+import 'package:bidsure_project/profilePageItem/addressPage.dart';
 import 'package:bidsure_project/settingscreen/settingsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -101,7 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   buildListTile(
-                    "Payment",
+                    "My Card",
                     Icons.credit_card,
                     Palette.darkMainColor,
                     () {},
@@ -112,8 +113,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     Palette.darkMainColor,
                     () {},
                   ),
-                  buildListTile("Shipping Address", Icons.location_city,
-                      Palette.darkMainColor, () {})
+                  buildListTile(
+                    "Shipping Address",
+                    Icons.location_city,
+                    Palette.darkMainColor,
+                    () {
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const AddressPage(),
+                        ),
+                      );
+                    },
+                  )
                 ],
               ),
             ),
