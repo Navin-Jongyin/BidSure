@@ -1,3 +1,4 @@
+import 'package:bidsure_project/components/myButton.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/settingscreen/settingsPage.dart';
 import 'package:flutter/material.dart';
@@ -133,21 +134,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.fromLTRB(20, 0, 20, 25),
-        child: FloatingActionButton(
-          backgroundColor: Palette.redMainColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          onPressed: () {},
-          child: Text(
-            "Save",
-            style: GoogleFonts.montserrat(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Palette.whiteColor),
-          ),
-        ),
+      bottomNavigationBar: MyButton(
+        onTap: () {},
+        text: "Save",
       ),
     );
   }

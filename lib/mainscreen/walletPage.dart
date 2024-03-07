@@ -1,3 +1,4 @@
+import 'package:bidsure_project/components/myButton.dart';
 import 'package:bidsure_project/config/bottomNavBar.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
@@ -95,31 +96,9 @@ class _WalletPageState extends State<WalletPage> {
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                height: 60,
-                width: 200,
-                child: FloatingActionButton(
-                  backgroundColor: Palette.redMainColor,
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const TopUpPage(),
-                      ),
-                    );
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    "Top Up",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Palette.whiteColor),
-                  ),
-                ),
+              child: MyButton(
+                onTap: () {},
+                text: "Top Up",
               ),
             ),
             Container(

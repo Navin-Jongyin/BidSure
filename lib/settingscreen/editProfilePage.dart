@@ -1,3 +1,4 @@
+import 'package:bidsure_project/components/myButton.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/settingscreen/settingsPage.dart';
 import 'package:flutter/material.dart';
@@ -147,34 +148,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(20),
-        child: FloatingActionButton(
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Palette.darkMainColor,
-                content: Text(
-                  "Information saved",
-                  style: GoogleFonts.montserrat(
-                      fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                duration: const Duration(seconds: 2),
-              ),
-            );
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          backgroundColor: Palette.redMainColor,
-          child: Text(
-            "Save",
-            style: GoogleFonts.montserrat(
-                fontSize: 18,
-                color: Palette.whiteColor,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
+      bottomNavigationBar: MyButton(
+        onTap: () {},
+        text: "Save",
       ),
     );
   }

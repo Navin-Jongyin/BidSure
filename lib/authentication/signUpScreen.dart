@@ -1,7 +1,10 @@
 import 'package:bidsure_project/authentication/createProfileScreen.dart';
 import 'package:bidsure_project/authentication/loginScreen.dart';
+import 'package:bidsure_project/components/myButton.dart';
+import 'package:bidsure_project/components/myTextField.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -12,92 +15,75 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Container(
-            margin: const EdgeInsets.all(20),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 30),
-                  height: 120,
-                  child: Image.asset('images/BidSure_Logo.png'),
+                SizedBox(
+                  height: 100,
+                  child: Image.asset("images/BidSure_Logo.png"),
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 30),
+                const SizedBox(
+                  height: 50,
+                ),
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Create your account",
                     style: GoogleFonts.montserrat(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Palette.darkMainColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        labelText: "Email",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelStyle: GoogleFonts.montserrat(fontSize: 15),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        labelText: "Password",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelStyle: GoogleFonts.montserrat(fontSize: 15),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        labelText: "Confirm Password",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelStyle: GoogleFonts.montserrat(fontSize: 15),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const CreateProfile(),
-                        ),
-                      );
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: Palette.redMainColor,
-                    child: Text(
-                      "Next",
-                      style: GoogleFonts.montserrat(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkMainColor),
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 15,
+                ),
+                MyTextField(
+                  controller: emailController,
+                  labelText: "Email",
+                  obscureText: false,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                MyTextField(
+                  controller: passwordController,
+                  labelText: "Password",
+                  obscureText: true,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                MyTextField(
+                  controller: confirmPasswordController,
+                  labelText: "Confirm Password",
+                  obscureText: true,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                MyButton(
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const CreateProfile(),
+                      ),
+                    );
+                  },
+                  text: "Continue",
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -105,28 +91,32 @@ class _SignUpPageState extends State<SignUpPage> {
                     Text(
                       "Already have an account?",
                       style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Palette.darkMainColor),
                     ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      const LogInPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Sign In",
-                          style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Palette.redMainColor,
-                              decoration: TextDecoration.underline),
-                        ))
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const LogInPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Sign In",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Palette.redMainColor,
+                        ),
+                      ),
+                    )
                   ],
                 )
               ],

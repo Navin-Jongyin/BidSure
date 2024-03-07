@@ -1,3 +1,4 @@
+import 'package:bidsure_project/components/myButton.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
 import 'package:flutter/material.dart';
@@ -264,24 +265,9 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 100,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
-        color: Colors.transparent,
-        child: FloatingActionButton(
-          onPressed: () {},
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          backgroundColor: Palette.redMainColor,
-          child: Text(
-            "Start Auction",
-            style: GoogleFonts.montserrat(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Palette.whiteColor),
-          ),
-        ),
+      bottomNavigationBar: MyButton(
+        onTap: () {},
+        text: "Start Auction",
       ),
     );
   }

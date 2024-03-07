@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
         splash: 'images/splashlogo.png',
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: Palette.darkMainColor,
-        nextScreen: const HomePage(),
+        nextScreen: const LogInPage(),
       ),
     );
   }
