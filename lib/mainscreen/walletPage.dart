@@ -1,4 +1,3 @@
-import 'package:bidsure_project/components/myButton.dart';
 import 'package:bidsure_project/config/bottomNavBar.dart';
 import 'package:bidsure_project/config/palette.dart';
 import 'package:bidsure_project/mainscreen/homePage.dart';
@@ -6,7 +5,9 @@ import 'package:bidsure_project/mainscreen/newAuctionPage.dart';
 import 'package:bidsure_project/mainscreen/profilePage.dart';
 import 'package:bidsure_project/mainscreen/searchPage.dart';
 import 'package:bidsure_project/mainscreen/topUpPage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WalletPage extends StatefulWidget {
@@ -21,102 +22,147 @@ class _WalletPageState extends State<WalletPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Palette.whiteColor,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               "Wallet",
               style: GoogleFonts.montserratAlternates(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Palette.redMainColor,
-              ),
+                  fontSize: 20,
+                  color: Palette.redMainColor,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(20),
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Palette.darkMainColor,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "BidSure Wallet",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.redMainColor,
-                    ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  height: 120,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Palette.darkMainColor,
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Balance",
+                        "BidSure Wallet",
                         style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Palette.whiteColor),
+                            fontSize: 20,
+                            color: Palette.redMainColor,
+                            fontWeight: FontWeight.bold),
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Text(
+                            "Current Balance",
+                            style: GoogleFonts.montserrat(
+                              color: Palette.whiteColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                           Text(
                             "100.00",
                             style: GoogleFonts.montserrat(
-                                fontSize: 22,
-                                color: Palette.whiteColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const ImageIcon(
-                            AssetImage("icons/baht.png"),
-                            color: Palette.whiteColor,
-                          ),
+                              color: Palette.whiteColor,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
                         ],
-                      )
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: MyButton(
-                onTap: () {},
-                text: "Top Up",
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: const Divider(),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: Text(
-                "Transaction History",
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Palette.darkMainColor,
                 ),
-              ),
-            )
-          ],
+                const SizedBox(
+                  height: 15,
+                ),
+                const Divider(),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Wallet Topup",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkMainColor),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const TopUpPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      height: 80,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Palette.greyColor),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Icon(
+                            Icons.credit_card,
+                            size: 30,
+                          ),
+                          Text(
+                            "Creidt Card",
+                            style: GoogleFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Palette.darkMainColor),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Divider(),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Transactions History",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.darkMainColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(

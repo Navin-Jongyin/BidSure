@@ -69,7 +69,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: true,
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 25,
                 ),
                 MyButton(
                   onTap: () {

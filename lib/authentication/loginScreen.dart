@@ -63,7 +63,7 @@ class _LogInPageState extends State<LogInPage> {
                   obscureText: true,
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 25,
                 ),
                 MyButton(
                   onTap: () {

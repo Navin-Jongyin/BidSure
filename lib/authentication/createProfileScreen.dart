@@ -92,7 +92,7 @@ class _CreateProfileState extends State<CreateProfile> {
                   obscureText: false,
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 30,
                 ),
                 MyButton(
                   onTap: () {

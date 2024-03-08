@@ -19,20 +19,21 @@ class MyTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: Palette.greyColor),
-              borderRadius: BorderRadius.circular(10)),
-          labelText: labelText,
-          labelStyle: GoogleFonts.montserrat(
-            fontSize: 14,
+        border: OutlineInputBorder(
+            borderSide: BorderSide(color: Palette.greyColor),
+            borderRadius: BorderRadius.circular(10)),
+        labelText: labelText,
+        labelStyle: GoogleFonts.montserrat(
+          fontSize: 14,
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Palette.redMainColor,
           ),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Palette.redMainColor,
-            ),
-          ),
-          focusColor: Palette.redMainColor),
+        ),
+        focusColor: Palette.redMainColor,
+      ),
     );
   }
 }
