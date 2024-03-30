@@ -1,5 +1,5 @@
 import 'package:bidsure_2/components/my_AppBar.dart';
-import 'package:bidsure_2/components/my_TextField.dart';
+
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/material.dart';

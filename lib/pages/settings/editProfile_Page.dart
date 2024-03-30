@@ -1,9 +1,7 @@
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/my_profileTile.dart';
 import 'package:bidsure_2/components/palette.dart';
-import 'package:bidsure_2/main.dart';
 import 'package:bidsure_2/pages/settings/editBio_Page.dart';
-import 'package:bidsure_2/pages/settings/editUsername_Page.dart';
 import 'package:bidsure_2/pages/settings/editname_Page.dart';
 import 'package:bidsure_2/pages/settings/settings_Page.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,4 +1,3 @@
-import 'package:awesome_card/extra/card_type.dart';
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/subpages/my_Card.dart';

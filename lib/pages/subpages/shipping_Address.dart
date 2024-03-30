@@ -30,7 +30,14 @@ class _ShippingAddressState extends State<ShippingAddress> {
           },
           backIcon: Icons.arrow_back,
           iconData: Icons.add,
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const ProfilePage(),
+              ),
+            );
+          },
         ),
       ),
       body: SafeArea(

@@ -6,7 +6,6 @@ import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/settings/change_Password.dart';
 import 'package:bidsure_2/pages/settings/editProfile_Page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

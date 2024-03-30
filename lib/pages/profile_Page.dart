@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/my_bottomNavBar.dart';
 import 'package:bidsure_2/components/my_listTile.dart';

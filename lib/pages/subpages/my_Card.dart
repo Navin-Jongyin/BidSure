@@ -1,7 +1,7 @@
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/my_cardModal.dart';
 import 'package:bidsure_2/components/palette.dart';
-import 'package:bidsure_2/main.dart';
+
 import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/subpages/add_NewCard.dart';
 import 'package:flutter/material.dart';
