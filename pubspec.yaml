@@ -41,6 +41,9 @@ dependencies:
   awesome_card: ^1.1.7
   http: ^1.2.1
   shared_preferences: ^2.2.2
+  haishin_kit: ^0.13.0
+  audio_session: ^0.1.18
+  permission_handler: ^11.3.1
   
 
 dev_dependencies:
