@@ -32,6 +32,7 @@ class MyAppBar extends StatelessWidget {
                 child: Icon(
                   backIcon,
                   color: Palette.greyColor,
+                  size: 20,
                 ),
               ),
               const SizedBox(

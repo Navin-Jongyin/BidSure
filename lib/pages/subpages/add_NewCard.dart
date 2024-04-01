@@ -35,48 +35,184 @@ class _AddNewCardState extends State<AddNewCard> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            children: [
-              Form(
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: cardNumberController,
-                      cursorColor: Palette.blueColor,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(16),
-                        CardNumberInputFormatter()
-                      ],
-                      decoration: InputDecoration(
-                        hintText: "Card Number",
-                        hintStyle: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Palette.greyColor),
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: ImageIcon(
-                            AssetImage("icons/card.png"),
-                            color: Palette.greyColor,
+          child: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Form(
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: cardNumberController,
+                        cursorColor: Palette.blueColor,
+                        keyboardType: TextInputType.number,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(16),
+                          CardNumberInputFormatter()
+                        ],
+                        decoration: InputDecoration(
+                          hintText: "Card Number",
+                          hintStyle: GoogleFonts.montserrat(
+                              fontSize: 12, color: Palette.greyColor),
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: ImageIcon(
+                              AssetImage("icons/card.png"),
+                              color: Palette.greyColor,
+                            ),
+                          ),
+                          focusColor: Palette.blueColor,
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Palette.blueColor),
                           ),
                         ),
-                        focusColor: Palette.blueColor,
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Palette.blueColor),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              cursorColor: Palette.blueColor,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              decoration: InputDecoration(
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.greyColor,
+                                    ),
+                                  ),
+                                  hintText: "Exp Date (MM/YY)",
+                                  hintStyle:
+                                      GoogleFonts.montserrat(fontSize: 10),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: ImageIcon(
+                                      AssetImage("icons/expiry.png"),
+                                    ),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Palette.blueColor))),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              obscureText: true,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              cursorColor: Palette.blueColor,
+                              keyboardType: TextInputType.number,
+                              maxLength: 3,
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Palette.greyColor),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.blueColor,
+                                  ),
+                                ),
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: ImageIcon(
+                                    AssetImage("icons/cvc.png"),
+                                  ),
+                                ),
+                                counterText: "",
+                                hintText: "CVV",
+                                hintStyle: GoogleFonts.montserrat(
+                                    fontSize: 12, color: Palette.greyColor),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        cursorColor: Palette.blueColor,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Palette.greyColor),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Palette.blueColor,
+                            ),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.person_outline,
+                            size: 30,
+                          ),
+                          hintText: "Name on card",
+                          hintStyle: GoogleFonts.montserrat(
+                              fontSize: 12, color: Palette.greyColor),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )
-            ],
-          ),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: GestureDetector(
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.blue.shade300,
+                        Palette.blueColor,
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Add Card",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.whiteColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
-      ),
+      )),
     );
   }
 }

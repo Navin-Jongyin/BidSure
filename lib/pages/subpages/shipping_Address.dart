@@ -1,3 +1,4 @@
+import 'package:bidsure_2/components/my_AddressTile.dart';
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/profile_Page.dart';
@@ -44,56 +45,10 @@ class _ShippingAddressState extends State<ShippingAddress> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.all(25),
-              padding: const EdgeInsets.all(15),
-              height: 120,
-              width: double.infinity,
-              color: Palette.whiteColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Name Surname",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.blueColor,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.phone,
-                        size: 15,
-                        color: Palette.darkGreyColor,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "081-123-1234",
-                        style: GoogleFonts.montserrat(
-                            fontSize: 14, color: Palette.darkGreyColor),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_city),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Address",
-                        style: GoogleFonts.montserrat(
-                            fontSize: 14, color: Palette.darkGreyColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            MyAddressTile(
+              name: "Navin Jongyin",
+              addressDetail: "Bangkok Thailand",
+              phoneNumber: "0812345678",
             ),
           ],
         ),
