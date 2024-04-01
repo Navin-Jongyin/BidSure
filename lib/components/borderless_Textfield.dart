@@ -4,11 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 class BorderlessTextField extends StatelessWidget {
   final String labelText;
-  const BorderlessTextField({super.key, required this.labelText});
+  final TextInputType keyboardType;
+
+  const BorderlessTextField(
+      {super.key, required this.labelText, required this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      cursorColor: Palette.blueColor,
+      keyboardType: keyboardType,
       style: GoogleFonts.montserrat(
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -24,7 +29,7 @@ class BorderlessTextField extends StatelessWidget {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         floatingLabelStyle: GoogleFonts.montserrat(
           fontSize: 14,
-          color: Palette.blueColor,
+          color: Palette.greyColor,
         ),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(
