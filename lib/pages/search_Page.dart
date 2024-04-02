@@ -6,6 +6,7 @@ import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/wallet_Page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
       backgroundColor: Palette.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: MyAppBar(
+        title: const MyAppBar(
           appBarTitle: "Search",
         ),
       ),
@@ -55,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
                     prefixIcon: const Icon(Icons.search),
                     prefixIconColor: Palette.blueColor,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Palette.greyColor),
+                      borderSide: const BorderSide(color: Palette.greyColor),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     contentPadding: const EdgeInsets.all(10.0),
@@ -65,7 +66,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Text(
@@ -75,10 +76,6 @@ class _SearchPageState extends State<SearchPage> {
                     color: Palette.greyColor,
                     fontWeight: FontWeight.w500),
               ),
-              MyCategory(
-                imagePath: "icons/category/equipment.png",
-                itemName: "Sports",
-              )
             ],
           ),
         ),
@@ -99,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
               context: context,
               isScrollControlled: true,
               builder: (BuildContext context) {
-                return MyBottomModal();
+                return const MyBottomModal();
               },
             );
           } else if (index == 3) {

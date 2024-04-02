@@ -23,8 +23,9 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
           appBarTitle: "New Online Auction",
           backButton: () {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const HomePage(),
               ),
             );
           },

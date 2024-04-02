@@ -1,6 +1,7 @@
 import 'package:bidsure_2/components/my_AppBar.dart';
 
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/pages/auctionPages/liveStreamAuction.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -185,6 +186,14 @@ class _NewLiveAuctionState extends State<NewLiveAuction> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(25.0),
         child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const LiveAuction(),
+              ),
+            );
+          },
           child: Container(
             height: 50,
             width: double.infinity,
@@ -200,13 +209,14 @@ class _NewLiveAuctionState extends State<NewLiveAuction> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: Center(
-                child: Text(
-              "Start Auction",
-              style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Palette.whiteColor),
-            )),
+              child: Text(
+                "Start Auction",
+                style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Palette.whiteColor),
+              ),
+            ),
           ),
         ),
       ),

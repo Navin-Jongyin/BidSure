@@ -67,6 +67,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: () {},
               ),
               MyListTile(
+                title: "Won Item",
+                imagePath: "icons/bidwon.png",
+                color: Palette.greyColor,
+                onTap: () {},
+              ),
+              MyListTile(
                 title: "My Card",
                 imagePath: "icons/card.png",
                 color: Palette.greyColor,

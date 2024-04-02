@@ -1,3 +1,4 @@
+import 'package:bidsure_2/components/my_AlertDialog.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,13 @@ class _LiveAuctionState extends State<LiveAuction> {
               width: double.infinity,
               color: Palette.blueColor,
               child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MyAlertDialog();
+                      });
+                },
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
