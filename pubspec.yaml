@@ -44,6 +44,8 @@ dependencies:
   haishin_kit: ^0.13.0
   audio_session: ^0.1.18
   permission_handler: ^11.3.1
+  flutter_secure_storage: ^9.0.0
+  image_picker: ^1.0.7
   
 
 dev_dependencies:

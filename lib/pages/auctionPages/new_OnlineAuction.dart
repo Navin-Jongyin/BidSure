@@ -1,6 +1,8 @@
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/pages/auctionPages/bidderOnlineAuction.dart';
 import 'package:bidsure_2/pages/auctionPages/liveStreamAuction.dart';
+import 'package:bidsure_2/pages/auctionPages/onlineAuction.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -199,6 +201,23 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                       const SizedBox(
                         height: 15,
                       ),
+                      SizedBox(
+                        width: 200,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const UserOnlineAuction(),
+                              ),
+                            );
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Text("To User UI"),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -210,7 +229,14 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
             right: 0,
             bottom: 20,
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const OnlineAuction(),
+                  ),
+                );
+              },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 25),
                 height: 50,

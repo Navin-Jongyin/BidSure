@@ -1,7 +1,10 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/settings/editProfile_Page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditName extends StatefulWidget {
   const EditName({Key? key}) : super(key: key);
@@ -12,11 +15,14 @@ class EditName extends StatefulWidget {
 
 class _EditNameState extends State<EditName> {
   final TextEditingController _nameController = TextEditingController();
+  String fullname = "";
   bool _isSaveButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
+    getUser();
+    _nameController.text = fullname;
     _nameController.addListener(_updateSaveButtonState);
   }
 
@@ -31,6 +37,55 @@ class _EditNameState extends State<EditName> {
     setState(() {
       _isSaveButtonEnabled = _nameController.text.isNotEmpty;
     });
+  }
+
+  Future<void> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.39:3000/user/';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        final name = jsonData['fullname'];
+        print(name);
+        setState(() {
+          fullname = name;
+        });
+      } else {
+        print("failed");
+        print(response.statusCode);
+      }
+    }
+  }
+
+  Future<void> updateUser(String newName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = "http://192.168.1.39:3000/user/updatefullname";
+      final response = await http.patch(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'fullname': newName}),
+      );
+      if (response.statusCode == 200) {
+        print("User Update Succesfully");
+        print(response.body);
+      } else {
+        print("update failed");
+        print(response.body);
+      }
+    }
   }
 
   @override
@@ -72,7 +127,14 @@ class _EditNameState extends State<EditName> {
             GestureDetector(
               onTap: _isSaveButtonEnabled
                   ? () {
-                      print("Save Tap");
+                      updateUser(_nameController.text);
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const EditProfile(),
+                        ),
+                      );
                     }
                   : null,
               child: Text(
@@ -118,7 +180,7 @@ class _EditNameState extends State<EditName> {
                         width: 0.5,
                       ),
                     ),
-                    hintText: "Add Your Name",
+                    hintText: fullname.isNotEmpty ? fullname : ' ',
                     hintStyle: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,

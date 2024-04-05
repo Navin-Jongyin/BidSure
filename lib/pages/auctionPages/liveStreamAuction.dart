@@ -19,6 +19,12 @@ class _LiveAuctionState extends State<LiveAuction> {
       body: Stack(
         children: [
           Positioned(
+            child: Container(
+              height: double.infinity,
+              color: Palette.greyColor,
+            ),
+          ),
+          Positioned(
             left: 0,
             right: 0,
             bottom: 0,

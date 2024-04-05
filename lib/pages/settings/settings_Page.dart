@@ -6,6 +6,7 @@ import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/settings/change_Password.dart';
 import 'package:bidsure_2/pages/settings/editProfile_Page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -70,17 +71,26 @@ class SettingsPage extends StatelessWidget {
                 imagePath: "icons/logout.png",
                 color: Palette.redColor,
                 onTap: () {
-                  Navigator.of(context).pushReplacement(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const LogInPage(),
-                    ),
-                  );
+                  _logout(context);
                 },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _logout(BuildContext context) async {
+    // Delete token
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+
+    // Navigate to login screen
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const LogInPage(),
       ),
     );
   }

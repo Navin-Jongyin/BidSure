@@ -16,8 +16,83 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  Future<void> _signIn(String email, String password) async {
+    String apiUrl = 'http://192.168.1.39:3000/auth/login';
+    final Map<String, dynamic> userData = {
+      'email': email,
+      'password': password
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(userData),
+    );
+    if (response.statusCode == 200) {
+      print("Log in Success");
+      print(response.body);
+      final jsonData = jsonDecode(response.body);
+      final data = jsonData['data'];
+      if (data != null && data['token'] != null) {
+        final String jsonToken = data['token'];
+        print(jsonToken);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', jsonToken);
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const HomePage(),
+          ),
+        );
+      } else {
+        print("Token not found in response");
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Please check you email or password again",
+              style: GoogleFonts.montserrat(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Palette.redColor,
+              ),
+            ),
+            actions: [
+              GestureDetector(
+                onTap: Navigator.of(context).pop,
+                child: Container(
+                  height: 30,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Palette.redColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "OK",
+                      style: GoogleFonts.montserrat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.whiteColor),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      print("Log in failed");
+      print(response.body);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +164,7 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                     ),
                     child: GestureDetector(
-                      onTap: () async {
+                      onTap: () {
                         Navigator.of(context).pushReplacement(
                           PageRouteBuilder(
                             pageBuilder:
@@ -97,6 +172,7 @@ class _LogInPageState extends State<LogInPage> {
                                     const HomePage(),
                           ),
                         );
+                        // _signIn(emailController.text, passwordController.text);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -134,9 +210,9 @@ class _LogInPageState extends State<LogInPage> {
               Text(
                 "Don't have an account?",
                 style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Palette.greyColor),
               ),
               const SizedBox(
                 width: 10,

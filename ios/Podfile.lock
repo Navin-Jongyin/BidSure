@@ -2,11 +2,15 @@ PODS:
   - audio_session (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - haishin_kit (0.13.0):
     - Flutter
     - HaishinKit (= 1.7.3)
   - HaishinKit (1.7.3):
     - Logboard (~> 2.4.1)
+  - image_picker_ios (0.0.1):
+    - Flutter
   - Logboard (2.4.1)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -20,7 +24,9 @@ PODS:
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - Flutter (from `Flutter`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - haishin_kit (from `.symlinks/plugins/haishin_kit/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -35,8 +41,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audio_session/ios"
   Flutter:
     :path: Flutter
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   haishin_kit:
     :path: ".symlinks/plugins/haishin_kit/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -47,8 +57,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   haishin_kit: d87548f0e0d41d73811b745c6f86948f36de4249
   HaishinKit: 326e27c4d06427ba53bffc68e516a92033293051
+  image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
   Logboard: b78984e3f9fa5075d5bfd9308d51b453992aad0e
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
