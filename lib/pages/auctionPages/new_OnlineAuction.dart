@@ -1,24 +1,27 @@
+import 'dart:ui';
+
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
-import 'package:bidsure_2/pages/auctionPages/bidderOnlineAuction.dart';
-import 'package:bidsure_2/pages/auctionPages/liveStreamAuction.dart';
-import 'package:bidsure_2/pages/auctionPages/onlineAuction.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NewOnlineAuction extends StatefulWidget {
-  const NewOnlineAuction({Key? key}) : super(key: key);
+  const NewOnlineAuction({super.key});
 
   @override
   State<NewOnlineAuction> createState() => _NewOnlineAuctionState();
 }
 
 class _NewOnlineAuctionState extends State<NewOnlineAuction> {
+  final List<int> times = List.generate(10, (index) => index);
+  int selectedTime = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Palette.backgroundColor,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: MyAppBar(
@@ -34,234 +37,279 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
           backIcon: Icons.arrow_back,
         ),
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: SingleChildScrollView(
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(25),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 70,
-                        child: TextField(
-                          cursorColor: Palette.blueColor,
-                          maxLength: 24,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: InputDecoration(
-                            labelText: "Item Name",
-                            labelStyle: GoogleFonts.montserrat(
-                              fontSize: 14,
-                            ),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Palette.greyColor),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Palette.blueColor),
-                            ),
-                            focusColor: Palette.blueColor,
-                            floatingLabelStyle: GoogleFonts.montserrat(
-                              fontSize: 15,
-                              color: Palette.blueColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        cursorColor: Palette.blueColor,
-                        maxLength: 80,
-                        minLines: 5,
-                        maxLines: 5,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: "Item Details",
-                          labelStyle: GoogleFonts.montserrat(fontSize: 14),
-                          border: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.greyColor),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.blueColor),
-                          ),
-                          focusColor: Palette.blueColor,
-                          floatingLabelStyle: GoogleFonts.montserrat(
-                            fontSize: 15,
-                            color: Palette.blueColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: SizedBox(
-                                height: 70,
-                                child: TextField(
-                                  cursorColor: Palette.blueColor,
-                                  style: GoogleFonts.montserrat(fontSize: 14),
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Palette.greyColor),
-                                    ),
-                                    labelText: "Starting Price",
-                                    labelStyle: GoogleFonts.montserrat(
-                                      fontSize: 15,
-                                      color: Palette.greyColor,
-                                    ),
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Palette.blueColor),
-                                    ),
-                                    focusColor: Palette.blueColor,
-                                    floatingLabelStyle: GoogleFonts.montserrat(
-                                      fontSize: 14,
-                                      color: Palette.blueColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: SizedBox(
-                                height: 70,
-                                child: TextField(
-                                  cursorColor: Palette.blueColor,
-                                  style: GoogleFonts.montserrat(fontSize: 14),
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Palette.greyColor),
-                                    ),
-                                    labelText: "New Bid",
-                                    labelStyle: GoogleFonts.montserrat(
-                                      fontSize: 15,
-                                      color: Palette.greyColor,
-                                    ),
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Palette.blueColor),
-                                    ),
-                                    floatingLabelStyle: GoogleFonts.montserrat(
-                                      fontSize: 14,
-                                      color: Palette.blueColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Add Image",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Palette.darkGreyColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                          ),
-                          child: const Icon(Icons.add),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      SizedBox(
-                        width: 200,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        const UserOnlineAuction(),
-                              ),
-                            );
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text("To User UI"),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 20,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const OnlineAuction(),
-                  ),
-                );
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 25),
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Colors.blue.shade300, Palette.blueColor],
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    "Start Auction",
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 70,
+                  child: TextField(
+                    maxLength: 24,
                     style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.whiteColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkGreyColor),
+                    cursorHeight: 20,
+                    cursorColor: Palette.blueColor,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Palette.greyColor,
+                        ),
+                      ),
+                      labelText: "Item Name",
+                      labelStyle: GoogleFonts.montserrat(
+                        fontSize: 15,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Palette.blueColor),
+                      ),
+                      floatingLabelStyle: GoogleFonts.montserrat(
+                        fontSize: 15,
+                      ),
+                      focusColor: Palette.blueColor,
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 150,
+                  child: TextField(
+                    maxLength: 80,
+                    minLines: 5,
+                    maxLines: 5,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkGreyColor),
+                    cursorHeight: 20,
+                    cursorColor: Palette.blueColor,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Palette.greyColor,
+                        ),
+                      ),
+                      labelText: "Item Description",
+                      labelStyle: GoogleFonts.montserrat(
+                        fontSize: 15,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Palette.blueColor),
+                      ),
+                      floatingLabelStyle: GoogleFonts.montserrat(
+                        fontSize: 15,
+                      ),
+                      focusColor: Palette.blueColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Palette.darkGreyColor),
+                          cursorHeight: 20,
+                          cursorColor: Palette.blueColor,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Palette.greyColor,
+                              ),
+                            ),
+                            labelText: "Start Price",
+                            labelStyle: GoogleFonts.montserrat(
+                              fontSize: 15,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Palette.blueColor),
+                            ),
+                            floatingLabelStyle: GoogleFonts.montserrat(
+                              fontSize: 15,
+                            ),
+                            focusColor: Palette.blueColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Palette.darkGreyColor),
+                          cursorHeight: 20,
+                          cursorColor: Palette.blueColor,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Palette.greyColor,
+                              ),
+                            ),
+                            labelText: "Minimum Bid",
+                            labelStyle: GoogleFonts.montserrat(
+                              fontSize: 15,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Palette.blueColor),
+                            ),
+                            floatingLabelStyle: GoogleFonts.montserrat(
+                              fontSize: 15,
+                            ),
+                            focusColor: Palette.blueColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  "Add Item Images",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Palette.greyColor,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                GestureDetector(
+                  child: Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Palette.greyColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add,
+                        color: Palette.greyColor,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 100,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(25),
+        child: GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Theme(
+                  data: ThemeData.dark(),
+                  child: CupertinoAlertDialog(
+                    title: const Text(
+                      "Select Auction Duration",
+                      style:
+                          TextStyle(fontSize: 18, fontFamily: '.SF Pro Text'),
+                    ),
+                    content: SizedBox(
+                      height: 100, // Set a fixed height for the container
+                      child: ListWheelScrollView(
+                        physics: const FixedExtentScrollPhysics(),
+                        itemExtent: 40,
+                        diameterRatio: 0.7, // Height of each item
+                        children: times.map((int time) {
+                          return Center(
+                            child: Text(
+                              '$time Hours',
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onSelectedItemChanged: (int index) {
+                          setState(() {
+                            selectedTime = times[index];
+                          });
+                        },
+                      ),
+                    ),
+                    actions: <Widget>[
+                      CupertinoDialogAction(
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Palette.blueColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      CupertinoDialogAction(
+                        child: const Text(
+                          "Select",
+                          style: TextStyle(
+                            color: Palette.blueColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        onPressed: () {
+                          print(selectedTime);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade300, Palette.blueColor],
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "Continue",
+                style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    color: Palette.whiteColor,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
