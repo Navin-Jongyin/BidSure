@@ -41,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(userData));
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       print(response.body);
     } else if (response.statusCode == 400) {
       final jsonData = jsonDecode(response.body);
@@ -355,13 +355,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             },
                           );
                         } else {
-                          // createUser(
-                          //   nameController.text,
-                          //   userNameController.text,
-                          //   emailController.text,
-                          //   passwordController.text,
-                          //   confirmPasswordController.text,
-                          // );
+                          createUser(
+                            nameController.text,
+                            userNameController.text,
+                            emailController.text,
+                            passwordController.text,
+                            confirmPasswordController.text,
+                          );
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {

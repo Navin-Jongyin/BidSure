@@ -12,6 +12,7 @@ class OnlineAuction extends StatefulWidget {
 }
 
 class _OnlineAuctionState extends State<OnlineAuction> {
+  TextEditingController priceController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +161,8 @@ class _OnlineAuctionState extends State<OnlineAuction> {
             Positioned(
               bottom: 0,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                 height: MediaQuery.of(context).size.height / 2 + -60,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
@@ -177,7 +179,7 @@ class _OnlineAuctionState extends State<OnlineAuction> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

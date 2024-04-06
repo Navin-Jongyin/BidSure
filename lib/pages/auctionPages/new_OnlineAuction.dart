@@ -1,11 +1,17 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/pages/auctionPages/bidderOnlineAuction.dart';
+import 'package:bidsure_2/pages/auctionPages/onlineAuction.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewOnlineAuction extends StatefulWidget {
   const NewOnlineAuction({super.key});
@@ -15,8 +21,72 @@ class NewOnlineAuction extends StatefulWidget {
 }
 
 class _NewOnlineAuctionState extends State<NewOnlineAuction> {
-  final List<int> times = List.generate(10, (index) => index);
+  final List<int> times = List.generate(6, (index) => index + 1);
   int selectedTime = 0;
+  TextEditingController itemName = TextEditingController();
+  TextEditingController itemDescription = TextEditingController();
+  TextEditingController startPrice = TextEditingController();
+  TextEditingController minimumBid = TextEditingController();
+  File? _image;
+
+  Future<void> selectAndUploadImage() async {
+    File? image = await pickImage(ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = image;
+      });
+      uploadImageToApi(image);
+    }
+  }
+
+  Future<File?> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
+
+  Future<void> uploadImageToApi(File imageFile) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      if (token != null) {
+        String apiUrl = "http://192.168.1.39:3000/user/updateimage";
+        var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+
+        request.files.add(
+            await http.MultipartFile.fromPath('userImage', imageFile.path));
+        request.headers['Authorization'] = 'Bearer $token';
+        request.headers['Content-Type'] = 'multipart/form-data';
+
+        var streamedResponse = await request.send();
+
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          print("Image Uploaded Success");
+          print(response.body);
+        } else {
+          print('Failed to upload image. Status code: ${response.statusCode}');
+          print(response.body);
+        }
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
+
+  Future<void> createAuction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = "http://192.168.1.39:3000/auction/";
+      final response = await http.post(Uri.parse(apiUrl));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,6 +272,9 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                   height: 15,
                 ),
                 GestureDetector(
+                  onTap: () {
+                    selectAndUploadImage();
+                  },
                   child: Container(
                     height: 120,
                     width: 120,
@@ -216,7 +289,15 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                       ),
                     ),
                   ),
-                )
+                ),
+                // FloatingActionButton(onPressed: () {
+                //   Navigator.of(context).pushReplacement(
+                //     PageRouteBuilder(
+                //       pageBuilder: (context, animation, secondaryAnimation) =>
+                //           const UserOnlineAuction(),
+                //     ),
+                //   );
+                // })
               ],
             ),
           ),
@@ -284,6 +365,13 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                         ),
                         onPressed: () {
                           print(selectedTime);
+                          Navigator.of(context).pushReplacement(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const OnlineAuction(),
+                            ),
+                          );
                         },
                       ),
                     ],

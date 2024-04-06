@@ -8,11 +8,13 @@ import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:bidsure_2/pages/search_Page.dart';
 import 'package:bidsure_2/pages/settings/settings_Page.dart';
+import 'package:bidsure_2/pages/subpages/following_List.dart';
 import 'package:bidsure_2/pages/subpages/my_Card.dart';
 import 'package:bidsure_2/pages/subpages/shipping_Address.dart';
 import 'package:bidsure_2/pages/wallet_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String fullname = "";
   String usernamee = "";
   String imagePath = "";
+  String bio = "";
 
   @override
   void initState() {
@@ -53,6 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final name = jsonData['fullname'];
         final username = jsonData['username'];
         final image = jsonData['image'];
+        final userbio = jsonData['bio'];
 
         print(name + username);
 
@@ -60,6 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
           fullname = name;
           usernamee = username;
           imagePath = baseUrl + image;
+          bio = userbio;
         });
       } else {
         print("failed");
@@ -87,92 +92,175 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
       ),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.all(15),
-                child: ClipOval(
-                  child: imagePath.isNotEmpty
-                      ? Image.network(
-                          imagePath,
-                          fit: BoxFit.cover,
-                          height: 120,
-                          width: 120,
-                        )
-                      : Image.asset(
-                          "icons/avatar.png",
-                          fit: BoxFit.cover,
-                          height: 120,
-                          width: 120,
-                        ),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: ClipOval(
+                    child: imagePath.isNotEmpty
+                        ? Image.network(
+                            imagePath,
+                            fit: BoxFit.cover,
+                            height: 120,
+                            width: 120,
+                          )
+                        : Image.asset(
+                            "icons/avatar.png",
+                            fit: BoxFit.cover,
+                            height: 120,
+                            width: 120,
+                          ),
+                  ),
                 ),
-              ),
-              Text(
-                fullname,
-                style: GoogleFonts.montserrat(
-                    fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              Text("@" + usernamee,
+                Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Follower",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 15, color: Palette.blueColor),
+                            ),
+                            Text(
+                              "200",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 20,
+                                  color: Palette.darkGreyColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const VerticalDivider(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const MyFollowing(),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Following",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 15, color: Palette.blueColor),
+                            ),
+                            Text(
+                              "200",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 20,
+                                  color: Palette.darkGreyColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Text(
+                  fullname,
+                  style: GoogleFonts.montserrat(
+                      fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  "@" + usernamee,
                   style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Palette.blueColor)),
-              const SizedBox(
-                height: 30,
-              ),
-              MyListTile(
-                title: "My Auctions",
-                imagePath: "icons/auction.png",
-                color: Palette.greyColor,
-                onTap: () {},
-              ),
-              MyListTile(
-                title: "Won Item",
-                imagePath: "icons/bidwon.png",
-                color: Palette.greyColor,
-                onTap: () {},
-              ),
-              MyListTile(
-                title: "My Card",
-                imagePath: "icons/card.png",
-                color: Palette.greyColor,
-                onTap: () {
-                  Navigator.of(context).pushReplacement(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const MyCard(),
-                    ),
-                  );
-                },
-              ),
-              MyListTile(
-                title: "Shipping Address",
-                imagePath: "icons/shipping.png",
-                color: Palette.greyColor,
-                onTap: () {
-                  Navigator.of(context).pushReplacement(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const ShippingAddress(),
-                    ),
-                  );
-                },
-              ),
-              MyListTile(
-                title: "History",
-                imagePath: "icons/history.png",
-                color: Palette.greyColor,
-                onTap: () {},
-              ),
-              MyListTile(
-                title: "Favourite",
-                imagePath: "icons/favourite.png",
-                color: Palette.greyColor,
-                onTap: () {},
-              ),
-            ],
+                      color: Palette.blueColor),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Center(
+                  child: Text(
+                    bio,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Palette.darkGreyColor),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: const Divider(
+                    color: Palette.greyColor,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                MyListTile(
+                  title: "My Auctions",
+                  imagePath: "icons/auction.png",
+                  color: Palette.greyColor,
+                  onTap: () {},
+                ),
+                MyListTile(
+                  title: "Won Item",
+                  imagePath: "icons/bidwon.png",
+                  color: Palette.greyColor,
+                  onTap: () {},
+                ),
+                MyListTile(
+                  title: "My Card",
+                  imagePath: "icons/card.png",
+                  color: Palette.greyColor,
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const MyCard(),
+                      ),
+                    );
+                  },
+                ),
+                MyListTile(
+                  title: "Shipping Address",
+                  imagePath: "icons/shipping.png",
+                  color: Palette.greyColor,
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const ShippingAddress(),
+                      ),
+                    );
+                  },
+                ),
+                MyListTile(
+                  title: "History",
+                  imagePath: "icons/history.png",
+                  color: Palette.greyColor,
+                  onTap: () {},
+                ),
+                MyListTile(
+                  title: "Favourite",
+                  imagePath: "icons/favourite.png",
+                  color: Palette.greyColor,
+                  onTap: () {},
+                ),
+              ],
+            ),
           ),
         ),
       ),

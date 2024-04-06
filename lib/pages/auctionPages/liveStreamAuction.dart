@@ -1,25 +1,55 @@
+import 'package:apivideo_live_stream/apivideo_live_stream.dart';
+import 'package:bidsure_2/camera/constants.dart';
 import 'package:bidsure_2/camera/params.dart';
+import 'package:bidsure_2/camera/settings_screen.dart';
+import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:apivideo_live_stream/apivideo_live_stream.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-class LiveAuction extends StatefulWidget {
-  const LiveAuction({super.key});
+MaterialColor apiVideoOrange = const MaterialColor(0xFFFA5B30, const {
+  50: const Color(0xFFFBDDD4),
+  100: const Color(0xFFFFD6CB),
+  200: const Color(0xFFFFD1C5),
+  300: const Color(0xFFFFB39E),
+  400: const Color(0xFFFA5B30),
+  500: const Color(0xFFF8572A),
+  600: const Color(0xFFF64819),
+  700: const Color(0xFFEE4316),
+  800: const Color(0xFFEC3809),
+  900: const Color(0xFFE53101)
+});
+
+class LiveViewPage extends StatefulWidget {
+  const LiveViewPage({Key? key}) : super(key: key);
 
   @override
-  State<LiveAuction> createState() => _LiveAuctionState();
+  _LiveViewPageState createState() => new _LiveViewPageState();
 }
 
-class _LiveAuctionState extends State<LiveAuction> {
-  final TextEditingController priceController = TextEditingController();
+class _LiveViewPageState extends State<LiveViewPage>
+    with WidgetsBindingObserver {
+  final ButtonStyle buttonStyle =
+      ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
   Params config = Params();
   late final ApiVideoLiveStreamController _controller;
   bool _isStreaming = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
+    _controller = createLiveStreamController();
+
+    _controller.initialize().catchError((e) {
+      showInSnackBar(e.toString());
+    });
+    super.initState();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -35,102 +65,212 @@ class _LiveAuctionState extends State<LiveAuction> {
     }
   }
 
-  @override
-  void initState() {
-    // WidgetsBinding.instance.addObserver(this);
-
-    _controller = createLiveStreamController();
-
-    _controller.initialize().catchError((e) {
-      showInSnackBar(e.toString());
-    });
-    super.initState();
-  }
-
   ApiVideoLiveStreamController createLiveStreamController() {
     return ApiVideoLiveStreamController(
-      initialAudioConfig: config.audio,
-      initialVideoConfig: config.video,
-      onConnectionSuccess: () {
-        print('Connection succeeded');
-      },
-      onConnectionFailed: (error) {
-        print('Connection failed: $error');
-        _showDialog(context, 'Connection failed', '$error');
-        if (mounted) {
-          setIsStreaming(false);
-        }
-      },
-      onDisconnection: () {
-        showInSnackBar('Disconnected');
-        if (mounted) {
-          setIsStreaming(false);
-        }
-      },
-      onError: (error) {
-        // Get error such as missing permission,...
-        _showDialog(context, 'Error', '$error');
-        if (mounted) {
-          setIsStreaming(false);
-        }
-      },
+        initialAudioConfig: config.audio,
+        initialVideoConfig: config.video,
+        onConnectionSuccess: () {
+          print('Connection succeeded');
+        },
+        onConnectionFailed: (error) {
+          print('Connection failed: $error');
+          _showDialog(context, 'Connection failed', '$error');
+          if (mounted) {
+            setIsStreaming(false);
+          }
+        },
+        onDisconnection: () {
+          showInSnackBar('Disconnected');
+          if (mounted) {
+            setIsStreaming(false);
+          }
+        },
+        onError: (error) {
+          // Get error such as missing permission,...
+          _showDialog(context, 'Error', '$error');
+          if (mounted) {
+            setIsStreaming(false);
+          }
+        });
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: MyAppBar(
+          appBarTitle: "BidSure",
+          backButton: () {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const HomePage(),
+              ),
+            );
+          },
+          backIcon: Icons.arrow_back,
+        ),
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Center(
+                          child: ApiVideoCameraPreview(controller: _controller),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _controlRowWidget(),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 10,
+              right: 20,
+              child: Container(
+                height: 50,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade300, Palette.blueColor],
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    "00:00:00",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 20,
+              top: 10,
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                height: 100,
+                width: 200,
+                decoration: BoxDecoration(
+                  color: Palette.whiteColor.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Palette.greenColor,
+                    width: 1.5,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          height: 25,
+                          width: 25,
+                          decoration: const BoxDecoration(
+                            color: Palette.redColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "BidSure User1",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            color: Palette.darkGreyColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        ImageIcon(
+                          AssetImage("icons/baht.png"),
+                          color: Palette.greenColor,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "0,000",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Palette.greenColor),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  void setIsStreaming(bool isStreaming) {
-    setState(() {
-      if (isStreaming) {
-        WakelockPlus.enable();
-      } else {
-        WakelockPlus.disable();
-      }
-      _isStreaming = isStreaming;
-    });
+  void _onMenuSelected(String choice, BuildContext context) {
+    if (choice == Constants.Settings) {
+      _awaitResultFromSettingsFinal(context);
+    }
   }
 
-  void onStopStreamingButtonPressed() {
-    stopStreaming().then((_) {
-      if (mounted) {
-        setIsStreaming(false);
-      }
-    }).catchError((error) {
-      if (error is PlatformException) {
-        _showDialog(
-            context, "Error", "Failed to stop stream: ${error.message}");
-      } else {
-        _showDialog(context, "Error", "Failed to stop stream: $error");
-      }
-    });
+  void _awaitResultFromSettingsFinal(BuildContext context) async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SettingsScreen(params: config)));
+    _controller.setVideoConfig(config.video);
+    _controller.setAudioConfig(config.audio);
   }
 
-  void onToggleMicrophoneButtonPressed() {
-    toggleMicrophone().then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-    }).catchError((error) {
-      if (error is PlatformException) {
-        _showDialog(
-            context, "Error", "Failed to toggle mute: ${error.message}");
-      } else {
-        _showDialog(context, "Error", "Failed to toggle mute: $error");
-      }
-    });
-  }
+  /// Display the control bar with buttons to take pictures and record videos.
+  Widget _controlRowWidget() {
+    final ApiVideoLiveStreamController? liveStreamController = _controller;
 
-  void onStartStreamingButtonPressed() {
-    startStreaming().then((_) {
-      if (mounted) {
-        setIsStreaming(true);
-      }
-    }).catchError((error) {
-      if (error is PlatformException) {
-        _showDialog(
-            context, "Error", "Failed to start stream: ${error.message}");
-      } else {
-        _showDialog(context, "Error", "Failed to start stream: $error");
-      }
-    });
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.cameraswitch),
+          color: apiVideoOrange,
+          onPressed:
+              liveStreamController != null ? onSwitchCameraButtonPressed : null,
+        ),
+        IconButton(
+          icon: const Icon(Icons.fiber_manual_record),
+          color: Colors.red,
+          onPressed: liveStreamController != null && !_isStreaming
+              ? onStartStreamingButtonPressed
+              : null,
+        ),
+        IconButton(
+            icon: const Icon(Icons.stop),
+            color: Colors.red,
+            onPressed: liveStreamController != null && _isStreaming
+                ? onStopStreamingButtonPressed
+                : null),
+      ],
+    );
   }
 
   void showInSnackBar(String message) {
@@ -198,313 +338,60 @@ class _LiveAuctionState extends State<LiveAuction> {
     });
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void onToggleMicrophoneButtonPressed() {
+    toggleMicrophone().then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    }).catchError((error) {
+      if (error is PlatformException) {
+        _showDialog(
+            context, "Error", "Failed to toggle mute: ${error.message}");
+      } else {
+        _showDialog(context, "Error", "Failed to toggle mute: $error");
+      }
+    });
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            // padding: EdgeInsets.all(20),
-            child: ApiVideoCameraPreview(
-              controller: _controller,
-            ),
-          ),
-          // Positioned(
-          //   top: MediaQuery.of(context).size.height * 0.70,
-          //   right: 25,
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       Container(
-          //         height: 30,
-          //         width: 70,
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(10),
-          //           color: Palette.blueColor,
-          //         ),
-          //         child: Center(
-          //           child: Column(
-          //             mainAxisAlignment: MainAxisAlignment.center,
-          //             children: [
-          //               Text(
-          //                 "+ 500",
-          //                 style: GoogleFonts.montserrat(
-          //                     fontSize: 16,
-          //                     color: Palette.whiteColor,
-          //                     fontWeight: FontWeight.bold),
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       ),
-          //       const SizedBox(
-          //         height: 5,
-          //       ),
-          //       GestureDetector(
-          //         onTap: () {
-          //           showDialog(
-          //             context: context,
-          //             builder: (BuildContext context) {
-          //               return Theme(
-          //                 data: ThemeData.dark(),
-          //                 child: CupertinoAlertDialog(
-          //                   title: const Text(
-          //                     "Enter Price",
-          //                     style: TextStyle(
-          //                         fontSize: 18, fontFamily: '.SF Pro Text'),
-          //                   ),
-          //                   content: Column(
-          //                     crossAxisAlignment: CrossAxisAlignment.start,
-          //                     children: [
-          //                       const Text(
-          //                         "Enter Price to Bid. Once press confirm the process cannot be undo",
-          //                         style: TextStyle(
-          //                             fontSize: 13, fontFamily: '.SF Pro Text'),
-          //                       ),
-          //                       const SizedBox(
-          //                         height: 10,
-          //                       ),
-          //                       CupertinoTextField(
-          //                         style: const TextStyle(
-          //                             color: Palette.whiteColor),
-          //                         controller: priceController,
-          //                         placeholder: "Enter Price",
-          //                         keyboardType: TextInputType.number,
-          //                       ),
-          //                     ],
-          //                   ),
-          //                   actions: <Widget>[
-          //                     CupertinoDialogAction(
-          //                       child: const Text(
-          //                         "Cancel",
-          //                         style: TextStyle(
-          //                             color: Palette.blueColor,
-          //                             fontWeight: FontWeight.w600),
-          //                       ),
-          //                       onPressed: () {
-          //                         Navigator.of(context).pop();
-          //                       },
-          //                     ),
-          //                     CupertinoDialogAction(
-          //                       child: const Text(
-          //                         "Place Bid",
-          //                         style: TextStyle(
-          //                             color: Palette.blueColor,
-          //                             fontWeight: FontWeight.w600),
-          //                       ),
-          //                       onPressed: () {
-          //                         print("Place Bid");
-          //                       },
-          //                     ),
-          //                   ],
-          //                 ),
-          //               );
-          //             },
-          //           );
-          //         },
-          //         child: Container(
-          //           width: 70.0,
-          //           height: 70.0,
-          //           decoration: const BoxDecoration(
-          //             shape: BoxShape.circle,
-          //             color: Palette.blueColor, // Adjust color as needed
-          //             boxShadow: [
-          //               BoxShadow(
-          //                   offset: Offset(0, 3),
-          //                   spreadRadius: 1,
-          //                   blurRadius: 3,
-          //                   color: Palette.greyColor)
-          //             ],
-          //           ),
-          //           child: const Center(
-          //             child: ImageIcon(
-          //               AssetImage("icons/bidlogo.png"),
-          //               size: 30,
-          //               color: Palette.whiteColor,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.1,
-            right: 20,
-            child: GestureDetector(
-              onTap: () {
-                _controller != null ? onSwitchCameraButtonPressed() : null;
-              },
-              child: Container(
-                height: 70,
-                width: 70,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Palette.yellowColor,
-                ),
-                child: const Icon(
-                  Icons.cameraswitch,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.025,
-            left: 25,
-            right: 25,
-            child: GestureDetector(
-              onTap: () {
-                _controller != null && _isStreaming
-                    ? onStopStreamingButtonPressed()
-                    : null;
-                Navigator.of(context).pushReplacement(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const HomePage(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Palette.redColor,
-                ),
-                child: Center(
-                  child: Text(
-                    "End Live",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.whiteColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * .05,
-            right: 25,
-            child: SafeArea(
-              child: Container(
-                height: 50,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Palette.darkBlueColor,
-                ),
-                child: Center(
-                  child: Text(
-                    "01:02:31",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 18,
-                        color: Palette.whiteColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * .05,
-            left: 25,
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                height: 80,
-                width: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Palette.greyColor.withOpacity(0.3),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          height: 25,
-                          width: 25,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Palette.redColor,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text("User 1")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 22,
-                          child: Image.asset(
-                            "icons/baht.png",
-                            color: Palette.greenColor,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "1,200",
-                          style: GoogleFonts.montserrat(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Palette.greenColor),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Positioned(
-          //     top: MediaQuery.sizeOf(context).height * 0.01,
-          //     left: 25,
-          //     child: SafeArea(
-          //       child: GestureDetector(
-          //         onTap: () {
-          //           Navigator.of(context).pushReplacement(
-          //             PageRouteBuilder(
-          //               pageBuilder: (context, animation, secondaryAnimation) =>
-          //                   const HomePage(),
-          //             ),
-          //           );
-          //           ;
-          //         },
-          //         child: Container(
-          //           height: 35,
-          //           width: 35,
-          //           decoration: const BoxDecoration(
-          //             shape: BoxShape.circle,
-          //             color: Palette.redColor,
-          //           ),
-          //           child: const Center(
-          //             child: Icon(
-          //               Icons.close,
-          //               color: Palette.whiteColor,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ))
-        ],
-      ),
-    );
+  void onStartStreamingButtonPressed() {
+    startStreaming().then((_) {
+      if (mounted) {
+        setIsStreaming(true);
+      }
+    }).catchError((error) {
+      if (error is PlatformException) {
+        _showDialog(
+            context, "Error", "Failed to start stream: ${error.message}");
+      } else {
+        _showDialog(context, "Error", "Failed to start stream: $error");
+      }
+    });
+  }
+
+  void onStopStreamingButtonPressed() {
+    stopStreaming().then((_) {
+      if (mounted) {
+        setIsStreaming(false);
+      }
+    }).catchError((error) {
+      if (error is PlatformException) {
+        _showDialog(
+            context, "Error", "Failed to stop stream: ${error.message}");
+      } else {
+        _showDialog(context, "Error", "Failed to stop stream: $error");
+      }
+    });
+  }
+
+  void setIsStreaming(bool isStreaming) {
+    setState(() {
+      if (isStreaming) {
+        WakelockPlus.enable();
+      } else {
+        WakelockPlus.disable();
+      }
+      _isStreaming = isStreaming;
+    });
   }
 }
 

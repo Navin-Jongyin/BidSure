@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/settings/editProfile_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class EditBio extends StatefulWidget {
   const EditBio({super.key});
@@ -31,6 +35,29 @@ class _EditBioState extends State<EditBio> {
     setState(() {
       _isSaveButtonEnabled = _nameController.text.isNotEmpty;
     });
+  }
+
+  Future<void> updateBio(String newBio) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = "http://192.168.1.39:3000/user/updatebio";
+      final response = await http.patch(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'bio': newBio}),
+      );
+      if (response.statusCode == 200) {
+        print("User Update Succesfully");
+        print(response.body);
+      } else {
+        print("update failed");
+        print(response.body);
+      }
+    }
   }
 
   @override
@@ -72,7 +99,15 @@ class _EditBioState extends State<EditBio> {
             GestureDetector(
               onTap: _isSaveButtonEnabled
                   ? () {
-                      print("Save Tap");
+                      updateBio(_nameController.text);
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const EditProfile(),
+                        ),
+                      );
+                      print(_nameController.text);
                     }
                   : null,
               child: Text(

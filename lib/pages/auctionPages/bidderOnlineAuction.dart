@@ -1,5 +1,6 @@
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,6 +12,7 @@ class UserOnlineAuction extends StatefulWidget {
 }
 
 class _UserOnlineAuctionState extends State<UserOnlineAuction> {
+  TextEditingController priceController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,6 +177,88 @@ class _UserOnlineAuctionState extends State<UserOnlineAuction> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).size.height * 0.05,
+              right: 20,
+              child: GestureDetector(
+                child: Container(
+                  height: 70,
+                  width: 70,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Palette.greenColor,
+                  ),
+                  child: Center(
+                    child: ImageIcon(
+                      AssetImage("icons/bidlogo.png"),
+                      size: 40,
+                      color: Palette.whiteColor,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Theme(
+                        data: ThemeData.dark(),
+                        child: CupertinoAlertDialog(
+                          title: const Text(
+                            "Enter Price",
+                            style: TextStyle(
+                                fontSize: 18, fontFamily: '.SF Pro Text'),
+                          ),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Enter Price to Bid. Once press confirm the process cannot be undo",
+                                style: TextStyle(
+                                    fontSize: 13, fontFamily: '.SF Pro Text'),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              CupertinoTextField(
+                                style:
+                                    const TextStyle(color: Palette.whiteColor),
+                                controller: priceController,
+                                placeholder: "Enter Price",
+                                keyboardType: TextInputType.number,
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            CupertinoDialogAction(
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(
+                                    color: Palette.blueColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            CupertinoDialogAction(
+                              child: const Text(
+                                "Place Bid",
+                                style: TextStyle(
+                                    color: Palette.blueColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              onPressed: () {
+                                print("Place Bid");
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             )
           ],

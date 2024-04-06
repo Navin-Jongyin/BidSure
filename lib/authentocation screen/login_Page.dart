@@ -165,14 +165,14 @@ class _LogInPageState extends State<LogInPage> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pushReplacement(
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    const HomePage(),
-                          ),
-                        );
-                        // _signIn(emailController.text, passwordController.text);
+                        // Navigator.of(context).pushReplacement(
+                        //   PageRouteBuilder(
+                        //     pageBuilder:
+                        //         (context, animation, secondaryAnimation) =>
+                        //             const HomePage(),
+                        //   ),
+                        // );
+                        _signIn(emailController.text, passwordController.text);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
