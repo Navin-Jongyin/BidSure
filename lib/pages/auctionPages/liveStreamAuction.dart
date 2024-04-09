@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apivideo_live_stream/apivideo_live_stream.dart';
 import 'package:bidsure_2/camera/constants.dart';
 import 'package:bidsure_2/camera/params.dart';
@@ -5,24 +7,12 @@ import 'package:bidsure_2/camera/settings_screen.dart';
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-
-MaterialColor apiVideoOrange = const MaterialColor(0xFFFA5B30, const {
-  50: const Color(0xFFFBDDD4),
-  100: const Color(0xFFFFD6CB),
-  200: const Color(0xFFFFD1C5),
-  300: const Color(0xFFFFB39E),
-  400: const Color(0xFFFA5B30),
-  500: const Color(0xFFF8572A),
-  600: const Color(0xFFF64819),
-  700: const Color(0xFFEE4316),
-  800: const Color(0xFFEC3809),
-  900: const Color(0xFFE53101)
-});
 
 class LiveViewPage extends StatefulWidget {
   const LiveViewPage({Key? key}) : super(key: key);
@@ -33,11 +23,11 @@ class LiveViewPage extends StatefulWidget {
 
 class _LiveViewPageState extends State<LiveViewPage>
     with WidgetsBindingObserver {
-  final ButtonStyle buttonStyle =
-      ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
   Params config = Params();
   late final ApiVideoLiveStreamController _controller;
   bool _isStreaming = false;
+  String rtmpUrl = '';
+  int auctionId = 0;
 
   @override
   void initState() {
@@ -49,6 +39,53 @@ class _LiveViewPageState extends State<LiveViewPage>
       showInSnackBar(e.toString());
     });
     super.initState();
+    getOneAuction();
+  }
+
+  Future<void> deleteAuction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/auction/deleteauction';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({'auctionId': auctionId}),
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else {
+        print(response.statusCode);
+        print(response.body);
+      }
+    }
+  }
+
+  Future<void> getOneAuction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/auction/getliveauctioninfo';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final data = jsonDecode(response.body);
+        final jsonData = data['info'];
+
+        var auctionid = jsonData['id'];
+        print(auctionid);
+        auctionId = auctionid;
+        print(auctionId);
+      }
+    }
   }
 
   @override
@@ -114,6 +151,14 @@ class _LiveViewPageState extends State<LiveViewPage>
           },
           backIcon: Icons.arrow_back,
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              getOneAuction();
+            },
+            icon: Icon(Icons.download),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(
@@ -252,14 +297,19 @@ class _LiveViewPageState extends State<LiveViewPage>
       children: <Widget>[
         IconButton(
           icon: const Icon(Icons.cameraswitch),
-          color: apiVideoOrange,
+          color: Palette.blueColor,
           onPressed:
               liveStreamController != null ? onSwitchCameraButtonPressed : null,
         ),
-        IconButton(
-          icon: const Icon(Icons.fiber_manual_record),
-          color: Colors.red,
-          onPressed: liveStreamController != null && !_isStreaming
+        GestureDetector(
+          child: Text(
+            "Start Live",
+            style: GoogleFonts.montserrat(
+                fontSize: 14,
+                color: _isStreaming ? Palette.greyColor : Palette.redColor,
+                fontWeight: FontWeight.bold),
+          ),
+          onTap: liveStreamController != null && !_isStreaming
               ? onStartStreamingButtonPressed
               : null,
         ),
@@ -307,6 +357,7 @@ class _LiveViewPageState extends State<LiveViewPage>
       print('Error: create a camera controller first.');
       return;
     }
+    print(config.streamKey);
 
     return await controller.startStreaming(
         streamKey: config.streamKey, url: config.rtmpUrl);
@@ -381,6 +432,13 @@ class _LiveViewPageState extends State<LiveViewPage>
         _showDialog(context, "Error", "Failed to stop stream: $error");
       }
     });
+    deleteAuction();
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const HomePage(),
+      ),
+    );
   }
 
   void setIsStreaming(bool isStreaming) {

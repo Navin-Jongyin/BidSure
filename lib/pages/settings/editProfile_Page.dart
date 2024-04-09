@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -26,11 +27,17 @@ class _EditProfileState extends State<EditProfile> {
   String fullname = '';
   File? _image;
   String imagePath = "";
+  List<String?> followingNumber = [];
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     getUser();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // Update the UI by calling setState
+      setState(() {});
+    });
   }
 
   Future<void> selectAndUploadImage() async {
@@ -47,7 +54,7 @@ class _EditProfileState extends State<EditProfile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.39:3000/user/';
+      String apiUrl = 'http://192.168.1.43:3000/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -56,14 +63,20 @@ class _EditProfileState extends State<EditProfile> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.39:3000';
+        final baseUrl = 'http://192.168.1.43:3000';
         final jsonData = jsonDecode(response.body);
         final name = jsonData['fullname'];
         final pic = jsonData['image'];
+        final List<dynamic> following = jsonData['following'];
+        final List<String> followingNumber =
+            following.map((item) => item.toString()).toList();
         imagePath = baseUrl + pic;
-        print(name);
-        print(pic);
-        print(imagePath);
+
+        // print(name);
+        // print(pic);
+        // print(imagePath);
+        // print(following);
+        print(followingNumber.length);
 
         setState(() {
           fullname = name;
@@ -90,7 +103,7 @@ class _EditProfileState extends State<EditProfile> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       if (token != null) {
-        String apiUrl = "http://192.168.1.39:3000/user/updateimage";
+        String apiUrl = "http://192.168.1.43:3000/user/updateimage";
         var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
 
         request.files.add(

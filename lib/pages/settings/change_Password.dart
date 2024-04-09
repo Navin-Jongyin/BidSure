@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/settings/settings_Page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -25,6 +31,90 @@ class _ChangePasswordState extends State<ChangePassword> {
     newPasswordController.addListener(_updateSaveButtonState);
     confirmNewPasswordController.addListener(_updateSaveButtonState);
     _updateSaveButtonState(); // Call the method to initialize button state
+  }
+
+  Future<void> changePassword() async {
+    String current = currentPasswordController.text;
+    String newPassword = newPasswordController.text;
+    String confirmPassword = confirmNewPasswordController.text;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (newPassword != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'New password does not match',
+            style: GoogleFonts.montserrat(
+                fontSize: 16,
+                color: Palette.redColor,
+                fontWeight: FontWeight.w500),
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    const apiUrl = "http://192.168.1.43:3000/user/changepassword";
+    final response = await http.patch(
+      Uri.parse(apiUrl),
+      body: json.encode({
+        'currentPassword': current,
+        'newPassword': newPassword,
+      }),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Theme(
+              data: ThemeData.dark(),
+              child: CupertinoAlertDialog(
+                title: Text("Sucessfu;"),
+                content: Text("Change password succesfully"),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text(
+                      "Done",
+                      style: TextStyle(color: Palette.blueColor),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const SettingsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'The Current Password is not correct',
+            style: GoogleFonts.montserrat(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Palette.redColor,
+            ),
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
@@ -81,7 +171,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             GestureDetector(
               onTap: _isSaveButtonEnabled
                   ? () {
-                      print("Save Tap");
+                      changePassword();
                     }
                   : null,
               child: Text(

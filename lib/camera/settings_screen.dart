@@ -220,23 +220,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   });
                             });
                       }),
-                  SettingsTile(
-                      title: Text('Stream key'),
-                      value: Text(widget.params.streamKey),
-                      onPressed: (BuildContext context) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return EditTextScreen(
-                                  title: "Enter stream key",
-                                  initialValue: widget.params.streamKey,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      widget.params.streamKey = value;
-                                    });
-                                  });
-                            });
-                      }),
                 ],
               )
             ],

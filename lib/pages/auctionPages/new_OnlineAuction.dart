@@ -27,63 +27,57 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
   TextEditingController itemDescription = TextEditingController();
   TextEditingController startPrice = TextEditingController();
   TextEditingController minimumBid = TextEditingController();
-  File? _image;
+  final ImagePicker imagePicker = ImagePicker();
+  List<XFile> _imageFileList = [];
+  String aucmode = "online";
 
-  Future<void> selectAndUploadImage() async {
-    File? image = await pickImage(ImageSource.gallery);
-    if (image != null) {
+  void selectMultiImage() async {
+    final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
+    if (selectedImages != null && selectedImages.isNotEmpty) {
       setState(() {
-        _image = image;
+        _imageFileList.addAll(selectedImages);
       });
-      uploadImageToApi(image);
     }
   }
 
-  Future<File?> pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    }
-    return null;
-  }
-
-  Future<void> uploadImageToApi(File imageFile) async {
+  Future<void> createAuction(String itemName, String itemDes, String startPrice,
+      String minBid, String mode, List<XFile> imageList, String endtime) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      if (token != null) {
-        String apiUrl = "http://192.168.1.39:3000/user/updateimage";
-        var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      var apiUrl = Uri.parse('http://192.168.1.43:3000/auction/');
+      var request = http.MultipartRequest('POST', apiUrl);
 
-        request.files.add(
-            await http.MultipartFile.fromPath('userImage', imageFile.path));
-        request.headers['Authorization'] = 'Bearer $token';
-        request.headers['Content-Type'] = 'multipart/form-data';
+      // Add text fields to the request
+      request.fields['name'] = itemName;
+      request.fields['description'] = itemDes;
+      request.fields['startingPrice'] = startPrice;
+      request.fields['minBid'] = minBid;
+      request.fields['mode'] = mode;
+      request.fields['endTime'] = endtime;
 
-        var streamedResponse = await request.send();
+      // Add image file to the request
+      for (var i = 0; i < imageList.length; i++) {
+        var imageField = await http.MultipartFile.fromPath(
+            'auctionImages', imageList[i].path);
+        request.files.add(imageField);
+      }
 
-        var response = await http.Response.fromStream(streamedResponse);
+      // Set authorization header
+      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Content-Type'] = 'multipart/form-data';
 
-        if (response.statusCode == 200) {
-          print("Image Uploaded Success");
-          print(response.body);
-        } else {
-          print('Failed to upload image. Status code: ${response.statusCode}');
-          print(response.body);
-        }
+      // Send the request
+      var response = await request.send();
+
+      // Get the response
+      if (response.statusCode == 201) {
+        print('Auction created successfully');
+      } else {
+        print('Failed to create auction. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error uploading image: $e');
-    }
-  }
-
-  Future<void> createAuction() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token != null) {
-      String apiUrl = "http://192.168.1.39:3000/auction/";
-      final response = await http.post(Uri.parse(apiUrl));
+      print('Error creating auction: $e');
     }
   }
 
@@ -91,7 +85,6 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Palette.backgroundColor,
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: MyAppBar(
@@ -110,20 +103,20 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(25.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 70,
                   child: TextField(
-                    maxLength: 24,
-                    style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Palette.darkGreyColor),
-                    cursorHeight: 20,
+                    controller: itemName,
                     cursorColor: Palette.blueColor,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLength: 24,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(
                         borderSide: BorderSide(
@@ -133,51 +126,45 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                       labelText: "Item Name",
                       labelStyle: GoogleFonts.montserrat(
                         fontSize: 15,
+                        color: Palette.greyColor,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Palette.blueColor),
+                        borderSide: BorderSide(
+                          color: Palette.blueColor,
+                        ),
                       ),
-                      floatingLabelStyle: GoogleFonts.montserrat(
-                        fontSize: 15,
-                      ),
-                      focusColor: Palette.blueColor,
                     ),
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  height: 150,
-                  child: TextField(
-                    maxLength: 80,
-                    minLines: 5,
-                    maxLines: 5,
-                    style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Palette.darkGreyColor),
-                    cursorHeight: 20,
-                    cursorColor: Palette.blueColor,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Palette.greyColor,
-                        ),
+                TextField(
+                  controller: itemDescription,
+                  cursorColor: Palette.blueColor,
+                  maxLines: 5,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLength: 80,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Palette.greyColor,
                       ),
-                      labelText: "Item Description",
-                      labelStyle: GoogleFonts.montserrat(
-                        fontSize: 15,
+                    ),
+                    labelText: "Item Description",
+                    labelStyle: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Palette.greyColor,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Palette.blueColor,
                       ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Palette.blueColor),
-                      ),
-                      floatingLabelStyle: GoogleFonts.montserrat(
-                        fontSize: 15,
-                      ),
-                      focusColor: Palette.blueColor,
                     ),
                   ),
                 ),
@@ -190,31 +177,29 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                       child: SizedBox(
                         height: 50,
                         child: TextField(
-                          keyboardType: TextInputType.number,
-                          style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Palette.darkGreyColor),
-                          cursorHeight: 20,
+                          controller: startPrice,
                           cursorColor: Palette.blueColor,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Palette.greyColor,
                               ),
                             ),
-                            labelText: "Start Price",
+                            labelText: "Starting Price",
                             labelStyle: GoogleFonts.montserrat(
                               fontSize: 15,
+                              color: Palette.greyColor,
                             ),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Palette.blueColor),
+                              borderSide: BorderSide(
+                                color: Palette.blueColor,
+                              ),
                             ),
-                            floatingLabelStyle: GoogleFonts.montserrat(
-                              fontSize: 15,
-                            ),
-                            focusColor: Palette.blueColor,
                           ),
                         ),
                       ),
@@ -226,13 +211,12 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                       child: SizedBox(
                         height: 50,
                         child: TextField(
-                          keyboardType: TextInputType.number,
-                          style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Palette.darkGreyColor),
-                          cursorHeight: 20,
+                          controller: minimumBid,
                           cursorColor: Palette.blueColor,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(
                               borderSide: BorderSide(
@@ -242,15 +226,14 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                             labelText: "Minimum Bid",
                             labelStyle: GoogleFonts.montserrat(
                               fontSize: 15,
+                              color: Palette.greyColor,
                             ),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Palette.blueColor),
+                              borderSide: BorderSide(
+                                color: Palette.blueColor,
+                              ),
                             ),
-                            floatingLabelStyle: GoogleFonts.montserrat(
-                              fontSize: 15,
-                            ),
-                            focusColor: Palette.blueColor,
                           ),
                         ),
                       ),
@@ -258,142 +241,226 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                   ],
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 20,
                 ),
                 Text(
                   "Add Item Images",
                   style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Palette.greyColor,
-                  ),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Palette.greyColor),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 20,
                 ),
                 GestureDetector(
                   onTap: () {
-                    selectAndUploadImage();
+                    selectMultiImage();
                   },
                   child: Container(
                     height: 120,
                     width: 120,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Palette.greyColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.add,
-                        color: Palette.greyColor,
+                      border: Border.all(
+                        color: Palette.darkGreyColor,
                       ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: const Icon(Icons.add),
                   ),
                 ),
-                // FloatingActionButton(onPressed: () {
-                //   Navigator.of(context).pushReplacement(
-                //     PageRouteBuilder(
-                //       pageBuilder: (context, animation, secondaryAnimation) =>
-                //           const UserOnlineAuction(),
-                //     ),
-                //   );
-                // })
+                const SizedBox(
+                  height: 15,
+                ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
+                  ),
+                  itemCount: _imageFileList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      width: 120,
+                      height: 120,
+                      child: Stack(
+                        children: [
+                          Image.file(
+                            File(_imageFileList[index].path),
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _imageFileList.removeAt(index);
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 100,
         width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(25),
-        child: GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Theme(
-                  data: ThemeData.dark(),
-                  child: CupertinoAlertDialog(
-                    title: const Text(
-                      "Select Auction Duration",
-                      style:
-                          TextStyle(fontSize: 18, fontFamily: '.SF Pro Text'),
-                    ),
-                    content: SizedBox(
-                      height: 100, // Set a fixed height for the container
-                      child: ListWheelScrollView(
-                        physics: const FixedExtentScrollPhysics(),
-                        itemExtent: 40,
-                        diameterRatio: 0.7, // Height of each item
-                        children: times.map((int time) {
-                          return Center(
-                            child: Text(
-                              '$time Hours',
-                              style: const TextStyle(
-                                fontSize: 18.0,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(25),
+            child: GestureDetector(
+              onTap: () {
+                if (itemName.text.isEmpty ||
+                    itemDescription.text.isEmpty ||
+                    startPrice.text.isEmpty ||
+                    minimumBid.text.isEmpty ||
+                    _imageFileList.isEmpty) {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Theme(
+                          data: ThemeData.dark(),
+                          child: CupertinoAlertDialog(
+                            title: const Text(
+                              "All fields must be filled",
+                              style: TextStyle(
+                                  fontSize: 16, fontFamily: '.SF Pro Text'),
+                            ),
+                            content: const Text(
+                              "To continue the process all filed cannot leave as blank",
+                              style: TextStyle(
+                                  fontSize: 14, fontFamily: '.SF Pro Text'),
+                            ),
+                            actions: [
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  "Retry",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: '.SF Pro Text',
+                                      color: Palette.redColor),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                            ),
-                          );
-                        }).toList(),
-                        onSelectedItemChanged: (int index) {
-                          setState(() {
-                            selectedTime = times[index];
-                          });
-                        },
-                      ),
-                    ),
-                    actions: <Widget>[
-                      CupertinoDialogAction(
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
-                              color: Palette.blueColor,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text(
-                          "Select",
-                          style: TextStyle(
-                            color: Palette.blueColor,
-                            fontWeight: FontWeight.w600,
+                            ],
                           ),
-                        ),
-                        onPressed: () {
-                          print(selectedTime);
-                          Navigator.of(context).pushReplacement(
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      const OnlineAuction(),
+                        );
+                      });
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Theme(
+                        data: ThemeData.dark(),
+                        child: CupertinoAlertDialog(
+                          title: const Text(
+                            "Select Auction Duration",
+                            style: TextStyle(
+                                fontSize: 18, fontFamily: '.SF Pro Text'),
+                          ),
+                          content: SizedBox(
+                            height: 100, // Set a fixed height for the container
+                            child: ListWheelScrollView(
+                              physics: const FixedExtentScrollPhysics(),
+                              itemExtent: 40,
+                              diameterRatio: 0.7, // Height of each item
+                              children: times.map((int time) {
+                                return Center(
+                                  child: Text(
+                                    '$time Hours',
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onSelectedItemChanged: (int index) {
+                                setState(() {
+                                  selectedTime = times[index];
+                                });
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
+                          ),
+                          actions: <Widget>[
+                            CupertinoDialogAction(
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(
+                                    color: Palette.blueColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            CupertinoDialogAction(
+                              child: const Text(
+                                "Select",
+                                style: TextStyle(
+                                  color: Palette.blueColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onPressed: () {
+                                print(selectedTime);
+                                createAuction(
+                                    itemName.text,
+                                    itemDescription.text,
+                                    startPrice.text,
+                                    minimumBid.text,
+                                    aucmode,
+                                    _imageFileList,
+                                    selectedTime.toString());
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
               },
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade300, Palette.blueColor],
-              ),
-            ),
-            child: Center(
-              child: Text(
-                "Continue",
-                style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    color: Palette.whiteColor,
-                    fontWeight: FontWeight.bold),
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade300, Palette.blueColor],
+                    ),
+                    borderRadius: BorderRadius.circular(25)),
+                child: Center(
+                  child: Text(
+                    "Continue",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.whiteColor),
+                  ),
+                ),
               ),
             ),
           ),

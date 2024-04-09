@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.19"
+  auto_orientation:
+    dependency: transitive
+    description:
+      name: auto_orientation
+      sha256: cd56bb59b36fa54cc28ee254bc600524f022a4862f31d5ab20abd7bb1c54e678
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.1"
   awesome_card:
     dependency: "direct main"
     description:
@@ -198,6 +206,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.17"
+  flutter_screen_wake:
+    dependency: transitive
+    description:
+      name: flutter_screen_wake
+      sha256: "7c69295d1405a5e7b673f5fe938d116076a4e8620cacdf04e884242622296f65"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -392,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  lecle_yoyo_player:
+    dependency: "direct main"
+    description:
+      name: lecle_yoyo_player
+      sha256: d0ff194aa3fe85803f6d01b072fc8ebc71b2eb0ebfbaed787334fc443ed4042a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   lints:
     dependency: transitive
     description:
@@ -741,6 +765,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.1"
+  timezone:
+    dependency: "direct main"
+    description:
+      name: timezone
+      sha256: "1cfd8ddc2d1cfd836bc93e67b9be88c3adaeca6f40a00ca999104c30693cdca0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.2"
   typed_data:
     dependency: transitive
     description:
@@ -798,7 +830,7 @@ packages:
     source: hosted
     version: "2.3.0"
   video_player_web_hls:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: video_player_web_hls
       sha256: a770c6f22ed18c63179f3e9fef8540212d43dc7fbddcd9f811d61cb4a5464955
@@ -837,6 +869,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+  webview_flutter:
+    dependency: "direct main"
+    description:
+      name: webview_flutter
+      sha256: "25e1b6e839e8cbfbd708abc6f85ed09d1727e24e08e08c6b8590d7c65c9a8932"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
+  webview_flutter_android:
+    dependency: transitive
+    description:
+      name: webview_flutter_android
+      sha256: f038ee2fae73b509dde1bc9d2c5a50ca92054282de17631a9a3d515883740934
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.16.0"
+  webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: webview_flutter_platform_interface
+      sha256: d937581d6e558908d7ae3dc1989c4f87b786891ab47bb9df7de548a151779d8d
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.0"
+  webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: webview_flutter_wkwebview
+      sha256: f12f8d8a99784b863e8b85e4a9a5e3cf1839d6803d2c0c3e0533a8f3c5a992a7
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.13.0"
   win32:
     dependency: transitive
     description:

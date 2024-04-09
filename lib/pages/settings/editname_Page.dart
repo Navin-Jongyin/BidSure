@@ -43,7 +43,7 @@ class _EditNameState extends State<EditName> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.39:3000/user/';
+      String apiUrl = 'http://192.168.1.43:3000/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -69,7 +69,7 @@ class _EditNameState extends State<EditName> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = "http://192.168.1.39:3000/user/updatefullname";
+      String apiUrl = "http://192.168.1.43:3000/user/updatefullname";
       final response = await http.patch(
         Uri.parse(apiUrl),
         headers: {

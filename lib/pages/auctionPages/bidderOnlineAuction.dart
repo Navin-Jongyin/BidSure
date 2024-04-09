@@ -1,21 +1,186 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class UserOnlineAuction extends StatefulWidget {
-  const UserOnlineAuction({super.key});
+  final int id;
+
+  const UserOnlineAuction({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<UserOnlineAuction> createState() => _UserOnlineAuctionState();
 }
 
 class _UserOnlineAuctionState extends State<UserOnlineAuction> {
-  TextEditingController priceController = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
+  String itemName = '';
+  List<String> images = [];
+  String itemDescription = '';
+  String minBid = '';
+  String baseUrl = 'http://192.168.1.43:3000';
+  String endTime = '';
+  String highestPrice = "";
+  String? walletBalance = '';
+  Timer? _timer;
+  String? bidderName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getAuctionInfo();
+    getBalance();
+
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      setState(() {
+        getHighestPrice();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the timer when the page is disposed
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> getAuctionInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/auction/getauctioninfo';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'auctionId': widget.id}),
+      );
+      if (response.statusCode == 200) {
+        // print(response.body);
+        final data = jsonDecode(response.body);
+        final jsonData = data['data'];
+        final name = jsonData['name'];
+        final List<String> image =
+            (jsonData['images'] as List).map((e) => e.toString()).toList();
+        final itemDes = jsonData['description'];
+        final minbid = jsonData['minBid'].toString();
+        final endtime = jsonData['endTime'];
+        setState(() {
+          itemName = name;
+          images = image;
+          itemDescription = itemDes;
+          endTime = endtime;
+          minBid = minbid;
+          // print(minBid);
+          // print(itemName);
+          // print(endTime);
+        });
+      } else {
+        print("failed");
+        print(response.statusCode);
+      }
+    }
+  }
+
+  Future<void> makeBid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/bidding/createbidding';
+
+      print(_controller.text + "ASd");
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+          {'id': widget.id, 'price': _controller.text},
+        ),
+      );
+      if (response.statusCode == 201) {
+        print(response.body);
+
+        final data = jsonDecode(response.body);
+      } else {
+        print("failed");
+        print(response.statusCode);
+      }
+    }
+  }
+
+  Future<void> getHighestPrice() async {
+    String apiUrl = 'http://192.168.1.43:3000/bidding';
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(
+        {
+          'auctionId': widget.id,
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      final data = jsonDecode(response.body);
+      final jsonData = data['result'];
+      final highest = jsonData['price'];
+      final String bidder = jsonData['username'] as String? ?? "Starting Price";
+
+      setState(() {
+        highestPrice = highest;
+        bidderName = bidder;
+        print(highestPrice);
+      });
+    } else {
+      print(response.statusCode);
+      // print("getPrice Failed");
+    }
+  }
+
+  Future<void> getBalance() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/topup/walletbalance';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        final walletbalance = jsonData['walletBalance'];
+        setState(() {
+          walletBalance = walletbalance;
+          print(walletBalance);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         height: double.maxFinite,
         width: double.maxFinite,
@@ -27,6 +192,16 @@ class _UserOnlineAuctionState extends State<UserOnlineAuction> {
                 height: MediaQuery.of(context).size.height / 2,
                 width: double.maxFinite,
                 color: Palette.greyColor,
+                child: PageView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: images.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.network(
+                      baseUrl + images[index],
+                      fit: BoxFit.cover, // Adjust the image fit as needed
+                    );
+                  },
+                ),
               ),
             ),
             Positioned(
@@ -62,98 +237,63 @@ class _UserOnlineAuctionState extends State<UserOnlineAuction> {
             Positioned(
               left: 25,
               right: 25,
-              top: MediaQuery.of(context).size.height / 2 - 40,
+              top: MediaQuery.of(context).size.height / 2 - 80,
               child: Container(
-                padding: const EdgeInsets.all(10),
-                height: 80,
-                width: double.maxFinite,
+                padding: const EdgeInsets.all(20),
+                height: 150,
                 decoration: BoxDecoration(
                   color: Palette.whiteColor,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      spreadRadius: 2,
-                      color: Palette.greyColor,
-                      blurRadius: 5,
-                      blurStyle: BlurStyle.outer,
-                    ),
+                  boxShadow: [
+                    const BoxShadow(
+                        offset: Offset(0, 4),
+                        blurRadius: 2,
+                        blurStyle: BlurStyle.outer,
+                        spreadRadius: 2,
+                        color: Palette.greyColor)
                   ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      height: double.maxFinite,
-                      width: 80,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "Highest",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: Palette.redColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            "12500",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                color: Palette.darkGreyColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      endTime, //countdown clock
+                      style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Palette.blueColor),
                     ),
-                    const VerticalDivider(),
-                    SizedBox(
-                      height: double.maxFinite,
-                      width: 80,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "New Bid",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: Palette.redColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            "+ 500",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                color: Palette.darkGreyColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const VerticalDivider(),
-                    SizedBox(
-                      height: double.maxFinite,
-                      width: 80,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "Time Left",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: Palette.redColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            "05:23:12",
-                            style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                color: Palette.darkGreyColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              bidderName!,
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Palette.darkGreyColor),
+                            ),
+                            Text(
+                              highestPrice,
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Palette.darkGreyColor),
+                            )
+                          ],
+                        ),
+                        Text(
+                          "New Bid + $minBid",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Palette.darkGreyColor),
+                        )
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -161,106 +301,193 @@ class _UserOnlineAuctionState extends State<UserOnlineAuction> {
             Positioned(
               bottom: 0,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                height: MediaQuery.of(context).size.height / 2 + -60,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                height: MediaQuery.of(context).size.height / 2 + -80,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Recents Bid",
+                      itemName,
                       style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        color: Palette.greyColor,
+                        fontSize: 20,
+                        color: Palette.blueColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    Text(
+                      itemDescription,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        color: Palette.greyColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
             Positioned(
-              bottom: MediaQuery.of(context).size.height * 0.05,
-              right: 20,
-              child: GestureDetector(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
                 child: Container(
-                  height: 70,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Palette.greenColor,
-                  ),
+                  padding: const EdgeInsets.all(25),
+                  color: Palette.backgroundColor,
+                  height: 100,
+                  width: MediaQuery.of(context).size.width,
                   child: Center(
-                    child: ImageIcon(
-                      AssetImage("icons/bidlogo.png"),
-                      size: 40,
-                      color: Palette.whiteColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            controller: _controller,
+                            cursorColor: Palette.blueColor,
+                            textAlign: TextAlign.right,
+                            decoration: const InputDecoration(
+                                hintText: "Enter Amount",
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Palette.greyColor))),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (double.tryParse(highestPrice)! +
+                                    double.tryParse(minBid)! >
+                                double.tryParse(_controller.text)!) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        "Bid Unsuccessful",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Palette.redColor),
+                                      ),
+                                      content: Text(
+                                        "Bidding amount must be more than current higheset price and minimum bid combine",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Palette.greyColor),
+                                      ),
+                                      actions: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Container(
+                                            height: 40,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Palette.redColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Retry",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Palette.whiteColor),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  });
+                            } else if (double.tryParse(walletBalance!)! <
+                                double.tryParse(_controller.text)!) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        "Insufficient Amount",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Palette.redColor),
+                                      ),
+                                      content: Text(
+                                        "Not enough money in the wallet. Please top up before making a bid",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Palette.greyColor),
+                                      ),
+                                      actions: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Container(
+                                            height: 40,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Palette.redColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Retry",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Palette.whiteColor),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  });
+                            } else {
+                              makeBid();
+                              //_controller.clear();
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.blue.shade300,
+                                  Palette.blueColor
+                                ],
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "BID",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 18,
+                                  color: Palette.whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Theme(
-                        data: ThemeData.dark(),
-                        child: CupertinoAlertDialog(
-                          title: const Text(
-                            "Enter Price",
-                            style: TextStyle(
-                                fontSize: 18, fontFamily: '.SF Pro Text'),
-                          ),
-                          content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Enter Price to Bid. Once press confirm the process cannot be undo",
-                                style: TextStyle(
-                                    fontSize: 13, fontFamily: '.SF Pro Text'),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              CupertinoTextField(
-                                style:
-                                    const TextStyle(color: Palette.whiteColor),
-                                controller: priceController,
-                                placeholder: "Enter Price",
-                                keyboardType: TextInputType.number,
-                              ),
-                            ],
-                          ),
-                          actions: <Widget>[
-                            CupertinoDialogAction(
-                              child: const Text(
-                                "Cancel",
-                                style: TextStyle(
-                                    color: Palette.blueColor,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            CupertinoDialogAction(
-                              child: const Text(
-                                "Place Bid",
-                                style: TextStyle(
-                                    color: Palette.blueColor,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              onPressed: () {
-                                print("Place Bid");
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            )
+                ))
           ],
         ),
       ),

@@ -19,7 +19,7 @@ class _LogInPageState extends State<LogInPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   Future<void> _signIn(String email, String password) async {
-    String apiUrl = 'http://192.168.1.39:3000/auth/login';
+    String apiUrl = 'http://192.168.1.43:3000/auth/login';
     final Map<String, dynamic> userData = {
       'email': email,
       'password': password

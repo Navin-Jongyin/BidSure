@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bidsure_2/components/my_AppBar.dart';
@@ -27,14 +28,31 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String fullname = "";
-  String usernamee = "";
+  String? fullname = "";
+  String? usernamee = "";
   String imagePath = "";
-  String bio = "";
+  String? bio = "";
+  List<String?> followingNumbers = [];
+  List<String?> followerNumbers = [];
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    getUser();
+    getfollowing();
+    // _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   // Update the UI by calling setState
+    //   setState(() {
+    //     getfollowing();
+    //   });
+    // });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Call getUser() whenever dependencies change
     getUser();
   }
 
@@ -42,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.39:3000/user/';
+      String apiUrl = 'http://192.168.1.43:3000/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -51,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.39:3000/';
+        final baseUrl = 'http://192.168.1.43:3000/';
         final jsonData = jsonDecode(response.body);
         final name = jsonData['fullname'];
         final username = jsonData['username'];
@@ -61,10 +79,54 @@ class _ProfilePageState extends State<ProfilePage> {
         print(name + username);
 
         setState(() {
-          fullname = name;
-          usernamee = username;
+          fullname = name ?? "";
+          usernamee = username ?? "";
           imagePath = baseUrl + image;
-          bio = userbio;
+          bio = userbio ?? "";
+        });
+      } else {
+        print("failed");
+        print(response.statusCode);
+      }
+    }
+  }
+
+  Future<void> getfollowing() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/user/';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final baseUrl = 'http://192.168.1.43:3000';
+        final jsonData = jsonDecode(response.body);
+        final name = jsonData['fullname'];
+        final pic = jsonData['image'];
+        final List<dynamic?> following = jsonData['following'];
+        final List<dynamic?> follower = jsonData['follower'];
+        final List<String> followingNumber =
+            following.map((item) => item.toString()).toList();
+        imagePath = baseUrl + pic;
+        final List<String> followerNumber =
+            follower.map((item) => item.toString()).toList();
+
+        // print(name);
+        // print(pic);
+        // print(imagePath);
+        // print(following);
+        print(followingNumber.length);
+
+        setState(() {
+          fullname = name;
+          imagePath = imagePath;
+          followingNumbers = followingNumber;
+          followerNumbers = followerNumber;
         });
       } else {
         print("failed");
@@ -100,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   margin: EdgeInsets.all(15),
                   child: ClipOval(
-                    child: imagePath.isNotEmpty
+                    child: imagePath != null && imagePath.isNotEmpty
                         ? Image.network(
                             imagePath,
                             fit: BoxFit.cover,
@@ -132,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: 15, color: Palette.blueColor),
                             ),
                             Text(
-                              "200",
+                              followerNumbers.length.toString(),
                               style: GoogleFonts.montserrat(
                                   fontSize: 20,
                                   color: Palette.darkGreyColor,
@@ -161,7 +223,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: 15, color: Palette.blueColor),
                             ),
                             Text(
-                              "200",
+                              followingNumbers != null
+                                  ? followingNumbers.length.toString()
+                                  : "0",
                               style: GoogleFonts.montserrat(
                                   fontSize: 20,
                                   color: Palette.darkGreyColor,
@@ -174,12 +238,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 Text(
-                  fullname,
+                  fullname ?? "",
                   style: GoogleFonts.montserrat(
                       fontSize: 18, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "@" + usernamee,
+                  "@" + usernamee! ?? "",
                   style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -190,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Center(
                   child: Text(
-                    bio,
+                    bio ?? "",
                     style: GoogleFonts.montserrat(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

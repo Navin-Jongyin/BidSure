@@ -6,9 +6,7 @@ import 'package:bidsure_2/components/palette.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:bidsure_2/pages/profile_Page.dart';
 import 'package:bidsure_2/pages/wallet_Page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,19 +25,135 @@ class _SearchPageState extends State<SearchPage> {
   List<String?> _filteredImagePaths = [];
   String imageUrl = "";
   List<String?> _filteredUserBio = [];
+  List<String?> _filteredUserId = [];
+  String userId = "";
+  String allUser = "";
+  List<String> followID = [];
+  SharedPreferences? prefs;
+  List<String?> followingNumbers = [];
+  List<String?> followerNumbers = [];
 
   @override
   void initState() {
     super.initState();
     getData();
+    _filterUser('');
   }
 
   void getData() async {
-    String apiUrl = "http://192.168.1.39:3000/user/alluseridandusername";
+    String apiUrl = "http://192.168.1.43:3000/user/alluseridandusername";
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      final id = jsonData['id'];
+      allUser = jsonData;
+      setState(
+        () {
+          print(response.body);
+          print(id);
+          print(jsonData);
+        },
+      );
+    }
+    // Initialize SharedPreferences
+    prefs = await SharedPreferences.getInstance();
+    // Retrieve followed user IDs from SharedPreferences
+    followID = prefs!.getStringList('followedIDs') ?? [];
+  }
+
+  Future<void> getfollowing() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/user/';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final baseUrl = 'http://192.168.1.43:3000';
+        final jsonData = jsonDecode(response.body);
+        final List<dynamic> following = jsonData['following'];
+        final List<dynamic> follower = jsonData['follower'];
+        final List<String> followingNumber =
+            following.map((item) => item.toString()).toList();
+        final List<String> followerNumber =
+            follower.map((item) => item.toString()).toList();
+
+        print(followingNumber.length);
+
+        setState(() {
+          followingNumbers = followingNumber;
+          followerNumbers = followerNumber;
+        });
+      } else {
+        print("failed");
+        print(response.statusCode);
+      }
+    }
+  }
+
+  void followUser(String userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String apiUrl = "http://192.168.1.43:3000/user/follow";
+    final response = await http.patch(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'follow': userId}),
+    );
+
+    if (response.statusCode == 200) {
       print(response.body);
+      // Successfully followed the user, handle accordingly
+      print("Successfully followed user with ID: $userId");
+      // Update local state
+      setState(() {
+        followID.add(userId);
+      });
+      // Update SharedPreferences
+      prefs.setStringList('followedIDs', followID);
+    } else {
+      print(response.body);
+      // Failed to follow the user, handle accordingly
+      print("Failed to follow user with ID: $userId");
+    }
+  }
+
+  void unfollowUser(String userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String apiUrl = "http://192.168.1.43:3000/user/unfollow";
+    final response = await http.patch(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'unfollow': userId}),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      // Successfully unfollowed the user, handle accordingly
+      print("Successfully unfollowed user with ID: $userId");
+      // Update local state
+      setState(() {
+        followID.remove(userId);
+      });
+      // Update SharedPreferences
+      prefs.setStringList('followedIDs', followID);
+    } else {
+      print(response.body);
+      // Failed to unfollow the user, handle accordingly
+      print("Failed to unfollow user with ID: $userId");
     }
   }
 
@@ -48,12 +162,12 @@ class _SearchPageState extends State<SearchPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final response = await http.get(
-        Uri.parse('http://192.168.1.39:3000/user/alluseridandusername?q='),
+        Uri.parse('http://192.168.1.43:3000/user/alluseridandusername?q='),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
-      final baseUrl = 'http://192.168.1.39:3000';
+      final baseUrl = 'http://192.168.1.43:3000';
       imageUrl = baseUrl;
 
       if (response.statusCode == 200) {
@@ -69,36 +183,34 @@ class _SearchPageState extends State<SearchPage> {
             userData.map((user) => user['bio'].toString()).toList();
         List<String> fullname =
             userData.map((user) => user['fullname'].toString()).toList();
+        List<String> userId =
+            userData.map((user) => user['id'].toString()).toList();
 
         List<String> filteredUsernames = usernames
             .where((username) =>
                 username.toLowerCase().startsWith(query.toLowerCase()))
             .toList();
 
-        // Extract image paths for filtered usernames
         List<String?> filteredImagePaths = [];
+        List<String?> filteredUserBio = [];
+        List<String> filteredFullName = [];
+        List<String> filtereduserId = [];
+
         for (int i = 0; i < usernames.length; i++) {
           if (filteredUsernames.contains(usernames[i])) {
             filteredImagePaths.add(imagePaths[i]);
-          }
-        }
-
-        List<String?> filteredUserBio = [];
-        for (int i = 0; i < usernames.length; i++) {
-          if (filteredUsernames.contains(usernames[i])) {
             filteredUserBio.add(userbio[i]);
+            filteredFullName.add(fullname[i]);
+            filtereduserId.add(userId[i]);
           }
         }
 
-        List<String> filteredFullName = [];
-        for (int i = 0; i < fullname.length; i++) {
-          filteredFullName.add(fullname[i]);
-        }
         setState(() {
           _filteredCategories = filteredUsernames;
           _filteredImagePaths = filteredImagePaths;
           _filteredUserBio = filteredUserBio;
           _filteresFullname = filteredFullName;
+          _filteredUserId = filtereduserId;
         });
       } else {
         throw Exception('Failed to load data from API');
@@ -109,6 +221,7 @@ class _SearchPageState extends State<SearchPage> {
         _filteresFullname.clear();
         _filteredImagePaths.clear();
         _filteredUserBio.clear();
+        _filteredUserId.clear();
       });
     }
   }
@@ -177,139 +290,194 @@ class _SearchPageState extends State<SearchPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
                       onTap: () {
+                        print(_filteredUserBio[index]);
+                        print(_filteresFullname[index]);
+                        print(_filteredUserId[index]);
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Dialog(
-                              child: Container(
-                                height: 440,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Palette.whiteColor,
-                                ),
-                                padding: const EdgeInsets.all(25),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ClipOval(
-                                      child: _filteredImagePaths[index] != null
-                                          ? Image.network(
-                                              imageUrl +
-                                                  _filteredImagePaths[index]!,
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.asset(
-                                              'icons/avatar.png',
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      _filteredCategories[index],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                            return StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
+                              return Dialog(
+                                child: Container(
+                                  height: 440,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Palette.whiteColor,
+                                  ),
+                                  padding: const EdgeInsets.all(25),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      ClipOval(
+                                        child: _filteredImagePaths[index] !=
+                                                null
+                                            ? Image.network(
+                                                imageUrl +
+                                                    _filteredImagePaths[index]!,
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.asset(
+                                                'icons/avatar.png',
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Follower",
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 15,
-                                                  color: Palette.blueColor),
-                                            ),
-                                            Text(
-                                              "200",
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 20,
-                                                  color: Palette.darkGreyColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        _filteredCategories[index],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
                                         ),
-                                        const VerticalDivider(
-                                          color: Palette.greyColor,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Following",
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 15,
-                                                  color: Palette.blueColor),
-                                            ),
-                                            Text(
-                                              "200",
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 20,
-                                                  color: Palette.darkGreyColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      _filteredUserBio[index] != null
-                                          ? _filteredUserBio[index]!
-                                          : "",
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    GestureDetector(
-                                      child: Container(
-                                        height: 50,
-                                        width: double.maxFinite,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.blue.shade300,
-                                              Palette.blueColor
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "User ID: ${_filteredUserId[index] ?? 'N/A'}", // Display user ID
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Follower",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 15,
+                                                    color: Palette.blueColor),
+                                              ),
+                                              Text(
+                                                followerNumbers != null
+                                                    ? followingNumbers.length
+                                                        .toString()
+                                                    : "0",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 20,
+                                                    color:
+                                                        Palette.darkGreyColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
                                             ],
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            25,
+                                          const VerticalDivider(
+                                            color: Palette.greyColor,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Following",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 15,
+                                                    color: Palette.blueColor),
+                                              ),
+                                              Text(
+                                                followingNumbers != null
+                                                    ? followingNumbers.length
+                                                        .toString()
+                                                    : "0",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 20,
+                                                    color:
+                                                        Palette.darkGreyColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        _filteredUserBio[index] != null
+                                            ? _filteredUserBio[index]!
+                                            : "",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          String currentUserId =
+                                              _filteredUserId[index]!;
+                                          if (followID
+                                              .contains(currentUserId)) {
+                                            // User is already followed, unfollow them
+                                            unfollowUser(currentUserId);
+                                            setState(() {
+                                              followID.remove(currentUserId);
+                                            });
+                                          } else {
+                                            // User is not followed, follow them
+                                            followUser(currentUserId);
+                                            setState(() {
+                                              followID.add(currentUserId);
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          height: 50,
+                                          width: double.maxFinite,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: followID.contains(
+                                                      _filteredUserId[index])
+                                                  ? [
+                                                      Colors.red.shade300,
+                                                      Palette.redColor
+                                                    ]
+                                                  : [
+                                                      Colors.blue.shade300,
+                                                      Palette.blueColor
+                                                    ],
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(25),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              followID.contains(
+                                                      _filteredUserId[index])
+                                                  ? "Unfollow"
+                                                  : "Follow",
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Palette.whiteColor,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        child: Center(
-                                            child: Text(
-                                          "Follow",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Palette.whiteColor,
-                                          ),
-                                        )),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            });
                           },
                         );
                       },

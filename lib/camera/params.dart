@@ -31,7 +31,7 @@ class Params {
       VideoConfig.withDefaultBitrate(resolution: Resolution.RESOLUTION_360);
   final AudioConfig audio = AudioConfig();
 
-  String rtmpUrl = "rtmp://192.168.1.39:1935/live";
+  String rtmpUrl = "rtmp://192.168.1.43:1935/live";
   String streamKey = "test";
 
   String getResolutionToString() {
