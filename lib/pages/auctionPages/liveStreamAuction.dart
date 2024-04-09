@@ -153,14 +153,6 @@ class _LiveViewPageState extends State<LiveViewPage>
           },
           backIcon: Icons.arrow_back,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              getOneAuction();
-            },
-            icon: Icon(Icons.download),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Stack(
@@ -182,30 +174,30 @@ class _LiveViewPageState extends State<LiveViewPage>
                 ],
               ),
             ),
-            Positioned(
-              top: 10,
-              right: 20,
-              child: Container(
-                height: 50,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade300, Palette.blueColor],
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    "00:00:00",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Palette.whiteColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 10,
+            //   right: 20,
+            //   child: Container(
+            //     height: 50,
+            //     width: 120,
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(20),
+            //       gradient: LinearGradient(
+            //         colors: [Colors.blue.shade300, Palette.blueColor],
+            //       ),
+            //     ),
+            //     child: Center(
+            //       child: Text(
+            //         "00:00:00",
+            //         style: GoogleFonts.montserrat(
+            //           fontSize: 20,
+            //           fontWeight: FontWeight.w500,
+            //           color: Palette.whiteColor,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Positioned(
               left: 20,
               top: 10,
@@ -315,12 +307,19 @@ class _LiveViewPageState extends State<LiveViewPage>
               ? onStartStreamingButtonPressed
               : null,
         ),
-        IconButton(
-            icon: const Icon(Icons.stop),
-            color: Colors.red,
-            onPressed: liveStreamController != null && _isStreaming
-                ? onStopStreamingButtonPressed
-                : null),
+        GestureDetector(
+          child: Text(
+            "End Live",
+            style: GoogleFonts.montserrat(
+              fontSize: 14,
+              color: _isStreaming ? Palette.redColor : Palette.greyColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: liveStreamController != null && _isStreaming
+              ? onStopStreamingButtonPressed
+              : null,
+        )
       ],
     );
   }

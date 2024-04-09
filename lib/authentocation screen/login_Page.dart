@@ -141,7 +141,7 @@ class _LogInPageState extends State<LogInPage> {
                   hintText: "Password",
                   obscureText: true,
                   prefixIcon: const Icon(Icons.lock_outline),
-                  showSuffix: true,
+                  showSuffix: false,
                 ),
                 const SizedBox(
                   height: 40,
