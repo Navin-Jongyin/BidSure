@@ -26,7 +26,7 @@ class NewLiveAuction extends StatefulWidget {
 }
 
 class _NewLiveAuctionState extends State<NewLiveAuction> {
-  final List<int> times = List.generate(3, (index) => index);
+  final List<int> times = List.generate(3, (index) => index + 1);
   int selectedTime = 0;
   Params config = Params();
   TextEditingController itemNameController = TextEditingController();

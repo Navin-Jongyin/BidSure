@@ -35,19 +35,39 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
   String bidderName = "";
   final TextEditingController _priceController = TextEditingController();
   Timer? _timer;
+  int socketUserId = 0;
+  String socketUsername = "";
 
   @override
   void initState() {
     getAuctionInfo();
     getBalance();
-
+    getUserSocket();
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      // Update the UI by calling setState
-      setState(() {
-        getHighestPrice();
-      });
-    });
+    // _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    //   // Update the UI by calling setState
+    //   setState(() {
+    //     getHighestPrice();
+
+    //   });
+    // });
+  }
+
+  Future<void> getUserSocket() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/user/getusersocket';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+      }
+    }
   }
 
   Future<void> getAuctionInfo() async {
@@ -165,7 +185,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
         final jsonData = jsonDecode(response.body);
         final walletbalance = jsonData['walletBalance'];
         setState(() {
-          walletBalance = walletbalance;
+          walletBalance = walletbalance.toString();
           print(walletBalance);
         });
       }

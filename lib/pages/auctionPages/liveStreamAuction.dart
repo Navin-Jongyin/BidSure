@@ -27,10 +27,12 @@ class _LiveViewPageState extends State<LiveViewPage>
   late final ApiVideoLiveStreamController _controller;
   bool _isStreaming = false;
   String rtmpUrl = '';
-  int auctionId = 0;
+  int? auctionId;
 
   @override
   void initState() {
+    super.initState();
+    getOneAuction();
     WidgetsBinding.instance.addObserver(this);
 
     _controller = createLiveStreamController();
@@ -38,8 +40,6 @@ class _LiveViewPageState extends State<LiveViewPage>
     _controller.initialize().catchError((e) {
       showInSnackBar(e.toString());
     });
-    super.initState();
-    getOneAuction();
   }
 
   Future<void> deleteAuction() async {
@@ -76,14 +76,16 @@ class _LiveViewPageState extends State<LiveViewPage>
         },
       );
       if (response.statusCode == 200) {
-        print(response.body);
+        // print(response.body);
         final data = jsonDecode(response.body);
         final jsonData = data['info'];
 
         var auctionid = jsonData['id'];
-        print(auctionid);
-        auctionId = auctionid;
-        print(auctionId);
+
+        setState(() {
+          auctionId = auctionid;
+          print("Auction ID $auctionId");
+        });
       }
     }
   }
@@ -417,6 +419,7 @@ class _LiveViewPageState extends State<LiveViewPage>
         _showDialog(context, "Error", "Failed to start stream: $error");
       }
     });
+    getOneAuction();
   }
 
   void onStopStreamingButtonPressed() {
