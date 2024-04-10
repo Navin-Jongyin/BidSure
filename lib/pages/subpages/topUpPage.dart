@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/pages/subpages/webviewPagr.dart';
 import 'package:bidsure_2/pages/wallet_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _TopUpPageState extends State<TopUpPage> {
   final TextEditingController _numberController = TextEditingController();
   late WebViewController webController = WebViewController();
   String stripeUrl = "";
+  String walletBalance = "";
 
   Future<void> topUp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,8 +42,10 @@ class _TopUpPageState extends State<TopUpPage> {
     final getStripeUel = jsonData['link'];
     stripeUrl = getStripeUel;
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       print("success");
+
+      webController..loadRequest(Uri.parse(stripeUrl));
 
       print(stripeUrl);
     } else {
@@ -51,14 +55,33 @@ class _TopUpPageState extends State<TopUpPage> {
     }
   }
 
-  Future<void> stripePage() async {
-    webController = WebViewController()..loadRequest(Uri.parse(stripeUrl));
-  }
-
   void initState() {
     super.initState();
-    stripePage();
     topUp();
+    getBalance();
+  }
+
+  Future<void> getBalance() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/topup/walletbalance';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        final walletbalance = jsonData['walletBalance'];
+        setState(() {
+          walletBalance = walletbalance;
+        });
+      }
+    }
   }
 
   @override
@@ -139,7 +162,7 @@ class _TopUpPageState extends State<TopUpPage> {
                                     width: 10,
                                   ),
                                   Text(
-                                    "0.00",
+                                    walletBalance,
                                     style: GoogleFonts.montserrat(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold,
@@ -166,6 +189,7 @@ class _TopUpPageState extends State<TopUpPage> {
                 ),
                 TextField(
                   controller: _numberController,
+                  keyboardType: TextInputType.number,
                   cursorColor: Palette.blueColor,
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
@@ -203,7 +227,13 @@ class _TopUpPageState extends State<TopUpPage> {
                       );
                     } else {
                       topUp();
-                      stripePage();
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  WebView(url: stripeUrl),
+                        ),
+                      );
                     }
                   },
                   child: Align(

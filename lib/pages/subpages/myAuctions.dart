@@ -247,7 +247,7 @@ class _MyAuctionState extends State<MyAuction> {
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 0.6,
+              childAspectRatio: 0.5,
             ),
             itemBuilder: (BuildContext context, int index) {
               // Check if the username matches the logged in user's username

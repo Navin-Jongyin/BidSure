@@ -292,7 +292,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
             children: [
               const YoYoPlayer(
                 aspectRatio: 9 / 16,
-                url: "http://192.168.1.43:8000/live/test/index.m3u8",
+                url: "http://10.66.12.8:8000/live/test/index.m3u8",
               ),
               Positioned(
                 left: 0,

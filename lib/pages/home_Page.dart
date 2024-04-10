@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   List<String> liveUsernameList = [];
   List<String> liveUserImageList = [];
   List<dynamic> liveLength = [];
+  String userName = "";
 
   @override
   void initState() {
@@ -111,6 +112,32 @@ class _HomePageState extends State<HomePage> {
           onlineUsernameList.clear();
           onlineUserImageList.clear();
         });
+      }
+    }
+  }
+
+  Future<void> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final baseUrl = 'https://bidsure-backend.onrender.com/';
+        final jsonData = jsonDecode(response.body);
+        final username = jsonData['username'];
+        setState(() {
+          userName = username;
+        });
+      } else {
+        print("failed");
+        print(response.statusCode);
       }
     }
   }
@@ -215,221 +242,237 @@ class _HomePageState extends State<HomePage> {
                         childAspectRatio: 0.6,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Palette.whiteColor,
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(0, 3),
-                                color: Palette.greyColor,
-                                blurRadius: 5,
-                                spreadRadius: 1,
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                height: 150,
-                                width: MediaQuery.of(context).size.width,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Image.network(
-                                    imageUrl +
-                                        onlineItemImagesList[index]
-                                                .replaceAll('[', "")
-                                                .replaceAll(']', "")
-                                                .split(',')[
-                                            0], // Replace 'placeholder_image_url' with your placeholder image URL or handle it accordingly
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                onlineItemNameList[index],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  color: Palette.blueColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "New Bid: +${onlineMinBidList[index]}",
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
+                        bool isNotMatching =
+                            onlineUsernameList[index] != userName;
+                        if (isNotMatching) {
+                          Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Palette.whiteColor,
+                              boxShadow: const [
+                                BoxShadow(
+                                  offset: Offset(0, 3),
                                   color: Palette.greyColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                onlineEndTimeList[index],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 11,
-                                  color: Palette.greyColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Dialog(
-                                          child: Container(
-                                            padding: const EdgeInsets.all(25),
-                                            height: 550,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Container(
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              color: Palette
-                                                                  .redColor),
-                                                      child: const Icon(
-                                                        Icons.close,
-                                                        color:
-                                                            Palette.whiteColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Container(
-                                                  height: 250,
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                          .width,
-                                                  child: Image.network(
-                                                    imageUrl +
-                                                        onlineItemImagesList[
-                                                                index]
-                                                            .replaceAll('[', "")
-                                                            .replaceAll(']', "")
-                                                            .split(',')[0],
-                                                    fit: BoxFit.fitWidth,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Text(
-                                                  onlineItemNameList[index],
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Palette.blueColor),
-                                                ),
-                                                Text(
-                                                  onlineItemDescriptionList[
-                                                      index],
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Palette.greyColor),
-                                                ),
-                                                Text(
-                                                  "New Bid: +${onlineMinBidList[index]}",
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Palette.greyColor),
-                                                ),
-                                                const Spacer(),
-                                                SizedBox(
-                                                  height: 50,
-                                                  width: 300,
-                                                  child: FloatingActionButton(
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              UserOnlineAuction(
-                                                            id: onlineAuctionIdList[
-                                                                index], // Pass the auction ID to the next page as a List
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        25,
-                                                      ),
-                                                    ),
-                                                    backgroundColor:
-                                                        Palette.blueColor,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Join Auction",
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Palette
-                                                                    .whiteColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                },
-                                child: Container(
-                                  height: 30,
+                                  blurRadius: 5,
+                                  spreadRadius: 1,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                  height: 150,
                                   width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.blue.shade300,
-                                        Palette.blueColor
-                                      ],
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Image.network(
+                                      imageUrl +
+                                          onlineItemImagesList[index]
+                                                  .replaceAll('[', "")
+                                                  .replaceAll(']', "")
+                                                  .split(',')[
+                                              0], // Replace 'placeholder_image_url' with your placeholder image URL or handle it accordingly
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Details",
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        color: Palette.whiteColor,
-                                        fontWeight: FontWeight.bold,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  onlineItemNameList[index],
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 16,
+                                    color: Palette.blueColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "New Bid: +${onlineMinBidList[index]}",
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 12,
+                                    color: Palette.greyColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  onlineEndTimeList[index],
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 11,
+                                    color: Palette.greyColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(25),
+                                              height: 550,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Palette
+                                                                    .redColor),
+                                                        child: const Icon(
+                                                          Icons.close,
+                                                          color: Palette
+                                                              .whiteColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Container(
+                                                    height: 250,
+                                                    width: MediaQuery.sizeOf(
+                                                            context)
+                                                        .width,
+                                                    child: Image.network(
+                                                      imageUrl +
+                                                          onlineItemImagesList[
+                                                                  index]
+                                                              .replaceAll(
+                                                                  '[', "")
+                                                              .replaceAll(
+                                                                  ']', "")
+                                                              .split(',')[0],
+                                                      fit: BoxFit.fitWidth,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Text(
+                                                    onlineItemNameList[index],
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Palette
+                                                                .blueColor),
+                                                  ),
+                                                  Text(
+                                                    onlineItemDescriptionList[
+                                                        index],
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Palette
+                                                                .greyColor),
+                                                  ),
+                                                  Text(
+                                                    "New Bid: +${onlineMinBidList[index]}",
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Palette
+                                                                .greyColor),
+                                                  ),
+                                                  const Spacer(),
+                                                  SizedBox(
+                                                    height: 50,
+                                                    width: 300,
+                                                    child: FloatingActionButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                UserOnlineAuction(
+                                                              id: onlineAuctionIdList[
+                                                                  index], // Pass the auction ID to the next page as a List
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          25,
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          Palette.blueColor,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "Join Auction",
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Palette
+                                                                      .whiteColor),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.blue.shade300,
+                                          Palette.blueColor
+                                        ],
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Details",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 14,
+                                          color: Palette.whiteColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
+                                )
+                              ],
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
                       },
                     ),
                     const SizedBox(
@@ -446,229 +489,250 @@ class _HomePageState extends State<HomePage> {
                       height: 15,
                     ),
                     GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: liveLength.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 0.6,
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Palette.whiteColor,
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(0, 3),
-                                color: Palette.greyColor,
-                                blurRadius: 5,
-                                spreadRadius: 1,
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                height: 150,
-                                width: MediaQuery.of(context).size.width,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Image.network(
-                                    imageUrl +
-                                        liveItemImagesList[index]
-                                            .replaceAll('[', "")
-                                            .replaceAll(']', ''),
-                                    fit: BoxFit.cover,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: liveLength.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: 0.6,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          bool isNotmatching =
+                              liveUsernameList[index] != userName;
+                          if (isNotmatching) {
+                            return Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Palette.whiteColor,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 3),
+                                    color: Palette.greyColor,
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    height: 150,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: Image.network(
+                                        imageUrl +
+                                            liveItemImagesList[index]
+                                                .replaceAll('[', "")
+                                                .replaceAll(']', ''),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                liveItemNameList[index],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  color: Palette.blueColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "New Bid: +${liveMinBidList[index]}",
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
-                                  color: Palette.greyColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                liveEndTimeList[index],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 11,
-                                  color: Palette.greyColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Dialog(
-                                          child: Container(
-                                            padding: const EdgeInsets.all(25),
-                                            height: 550,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Container(
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              color: Palette
-                                                                  .redColor),
-                                                      child: const Icon(
-                                                        Icons.close,
-                                                        color:
-                                                            Palette.whiteColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  child: Image.network(
-                                                    imageUrl +
-                                                        liveItemImagesList[
-                                                                index]
-                                                            .replaceAll('[', "")
-                                                            .replaceAll(']', "")
-                                                            .split(',')[0],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Text(
-                                                  liveItemNameList[index],
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Palette.blueColor),
-                                                ),
-                                                Text(
-                                                  liveItemDescriptionList[
-                                                      index],
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Palette.greyColor),
-                                                ),
-                                                Text(
-                                                  "New Bid: +${liveMinBidList[index]}",
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Palette.greyColor),
-                                                ),
-                                                const Spacer(),
-                                                SizedBox(
-                                                  height: 50,
-                                                  width: 300,
-                                                  child: FloatingActionButton(
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              BidderLiveAuction(
-                                                            id: liveAuctionIdList[
-                                                                index], // Pass the auction ID to the next page as a List
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    liveItemNameList[index],
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 16,
+                                      color: Palette.blueColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "New Bid: +${liveMinBidList[index]}",
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 12,
+                                      color: Palette.greyColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    liveEndTimeList[index],
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 11,
+                                      color: Palette.greyColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(25),
+                                                height: 550,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Container(
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color: Palette
+                                                                      .redColor),
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            color: Palette
+                                                                .whiteColor,
                                                           ),
                                                         ),
-                                                      );
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        25,
                                                       ),
                                                     ),
-                                                    backgroundColor:
-                                                        Palette.blueColor,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Join Auction",
-                                                        style: GoogleFonts
-                                                            .montserrat(
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      child: Image.network(
+                                                        imageUrl +
+                                                            liveItemImagesList[
+                                                                    index]
+                                                                .replaceAll(
+                                                                    '[', "")
+                                                                .replaceAll(
+                                                                    ']', "")
+                                                                .split(',')[0],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text(
+                                                      liveItemNameList[index],
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Palette
+                                                                  .blueColor),
+                                                    ),
+                                                    Text(
+                                                      liveItemDescriptionList[
+                                                          index],
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: Palette
+                                                                  .greyColor),
+                                                    ),
+                                                    Text(
+                                                      "New Bid: +${liveMinBidList[index]}",
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: Palette
+                                                                  .greyColor),
+                                                    ),
+                                                    const Spacer(),
+                                                    SizedBox(
+                                                      height: 50,
+                                                      width: 300,
+                                                      child:
+                                                          FloatingActionButton(
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  BidderLiveAuction(
+                                                                id: liveAuctionIdList[
+                                                                    index], // Pass the auction ID to the next page as a List
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            25,
+                                                          ),
+                                                        ),
+                                                        backgroundColor:
+                                                            Palette.blueColor,
+                                                        child: Center(
+                                                          child: Text(
+                                                            "Join Auction",
+                                                            style: GoogleFonts.montserrat(
                                                                 fontSize: 20,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
                                                                 color: Palette
                                                                     .whiteColor),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.blue.shade300,
+                                            Palette.blueColor
+                                          ],
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Details",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            color: Palette.whiteColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      });
-                                },
-                                child: Container(
-                                  height: 30,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.blue.shade300,
-                                        Palette.blueColor
-                                      ],
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Details",
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        color: Palette.whiteColor,
-                                        fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
                   ],
                 ),
               ),
