@@ -430,13 +430,22 @@ class _NewOnlineAuctionState extends State<NewOnlineAuction> {
                               onPressed: () {
                                 print(selectedTime);
                                 createAuction(
-                                    itemName.text,
-                                    itemDescription.text,
-                                    startPrice.text,
-                                    minimumBid.text,
-                                    aucmode,
-                                    _imageFileList,
-                                    selectedTime.toString());
+                                  itemName.text,
+                                  itemDescription.text,
+                                  startPrice.text,
+                                  minimumBid.text,
+                                  aucmode,
+                                  _imageFileList,
+                                  selectedTime.toString(),
+                                );
+
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        const HomePage(),
+                                  ),
+                                );
                               },
                             ),
                           ],

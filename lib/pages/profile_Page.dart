@@ -10,8 +10,10 @@ import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:bidsure_2/pages/search_Page.dart';
 import 'package:bidsure_2/pages/settings/settings_Page.dart';
 import 'package:bidsure_2/pages/subpages/following_List.dart';
+import 'package:bidsure_2/pages/subpages/myAuctions.dart';
 import 'package:bidsure_2/pages/subpages/my_Card.dart';
 import 'package:bidsure_2/pages/subpages/shipping_Address.dart';
+import 'package:bidsure_2/pages/subpages/wonItems.dart';
 import 'package:bidsure_2/pages/wallet_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -277,23 +279,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: "My Auctions",
                   imagePath: "icons/auction.png",
                   color: Palette.greyColor,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const MyAuction(),
+                      ),
+                    );
+                  },
                 ),
                 MyListTile(
                   title: "Won Item",
                   imagePath: "icons/bidwon.png",
                   color: Palette.greyColor,
-                  onTap: () {},
-                ),
-                MyListTile(
-                  title: "My Card",
-                  imagePath: "icons/card.png",
-                  color: Palette.greyColor,
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
-                            const MyCard(),
+                            const WonItem(),
                       ),
                     );
                   },
@@ -314,12 +317,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 MyListTile(
                   title: "History",
                   imagePath: "icons/history.png",
-                  color: Palette.greyColor,
-                  onTap: () {},
-                ),
-                MyListTile(
-                  title: "Favourite",
-                  imagePath: "icons/favourite.png",
                   color: Palette.greyColor,
                   onTap: () {},
                 ),

@@ -313,9 +313,11 @@ class _HomePageState extends State<HomePage> {
                                                 const SizedBox(
                                                   height: 10,
                                                 ),
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                                Container(
+                                                  height: 250,
+                                                  width:
+                                                      MediaQuery.sizeOf(context)
+                                                          .width,
                                                   child: Image.network(
                                                     imageUrl +
                                                         onlineItemImagesList[
@@ -323,6 +325,7 @@ class _HomePageState extends State<HomePage> {
                                                             .replaceAll('[', "")
                                                             .replaceAll(']', "")
                                                             .split(',')[0],
+                                                    fit: BoxFit.fitWidth,
                                                   ),
                                                 ),
                                                 SizedBox(

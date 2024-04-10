@@ -455,9 +455,80 @@ class _UserOnlineAuctionState extends State<UserOnlineAuction> {
                                     );
                                   });
                             } else {
-                              makeBid();
-                              //_controller.clear();
-                              setState(() {});
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        "Confirm Bid",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Palette.blueColor),
+                                      ),
+                                      content: Text(
+                                        "Once you confirm the process cannot be undone!",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Palette.greyColor),
+                                      ),
+                                      actions: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            //_controller.clear();
+
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Container(
+                                            height: 40,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Palette.redColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Cancel",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Palette.whiteColor),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            makeBid();
+                                            //_controller.clear();121
+
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Container(
+                                            height: 40,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Palette.blueColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Confirm",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Palette.whiteColor),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  });
                             }
                           },
                           child: Container(
