@@ -6,6 +6,8 @@ import 'package:bidsure_2/camera/params.dart';
 import 'package:bidsure_2/camera/settings_screen.dart';
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/model/live_msg_model.dart';
+import 'package:bidsure_2/model/msg_widget.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LiveViewPage extends StatefulWidget {
   const LiveViewPage({Key? key}) : super(key: key);
@@ -28,6 +31,11 @@ class _LiveViewPageState extends State<LiveViewPage>
   bool _isStreaming = false;
   String rtmpUrl = '';
   int? auctionId;
+  int socketUserId = 0;
+  String socketUsername = "";
+  IO.Socket? socket;
+  List<LiveMsgModel> listMsg = [];
+  TextEditingController _liveMsgController = TextEditingController();
 
   @override
   void initState() {
@@ -40,6 +48,34 @@ class _LiveViewPageState extends State<LiveViewPage>
     _controller.initialize().catchError((e) {
       showInSnackBar(e.toString());
     });
+    connect();
+    getUserSocket();
+  }
+
+  Future<void> getUserSocket() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      String apiUrl = 'http://192.168.1.43:3000/user/getusersocket';
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        final id = jsonData['userId'];
+        final username = jsonData['username'];
+        setState(() {
+          socketUsername = username;
+          socketUserId = id;
+          print(socketUserId);
+          print(socketUsername);
+        });
+      }
+    }
   }
 
   Future<void> deleteAuction() async {
@@ -88,6 +124,61 @@ class _LiveViewPageState extends State<LiveViewPage>
         });
       }
     }
+  }
+
+  void connect() {
+    socket = IO.io("http://localhost:3000", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    socket!.connect();
+    socket!.onConnect((_) {
+      print("frontend connected");
+      socket!.on("sendMsgServer", (msg) {
+        print("Received message: $msg");
+        try {
+          if (msg != null && msg is Map<String, dynamic>) {
+            final int id = msg['id'];
+            final String? username = msg['username'];
+            final String? receivedMsg = msg['msg'];
+            if (username != null &&
+                receivedMsg != null &&
+                msg["userId"] != socketUserId &&
+                msg["id"] == auctionId) {
+              setState(() {
+                listMsg.add(LiveMsgModel(
+                  id: id,
+                  msg: receivedMsg,
+                  username: username,
+                ));
+              });
+            } else {
+              print(
+                  "One of the properties is null: , sender=$username, receivedMsg=$receivedMsg");
+            }
+          } else {
+            print("Invalid message format: $msg");
+          }
+        } catch (e, stackTrace) {
+          print("Error processing message: $e");
+          print(stackTrace);
+        }
+      });
+    });
+  }
+
+  void sendMsg(int id, String msg, String userName) {
+    LiveMsgModel ownMsg = LiveMsgModel(id: id, msg: msg, username: userName);
+    listMsg.add(ownMsg);
+    setState(() {
+      listMsg;
+    });
+    socket!.emit('sendMsg', {
+      "id": id,
+      "msg": msg,
+      "username": userName,
+      "userId": socketUserId,
+    });
   }
 
   @override
@@ -174,30 +265,6 @@ class _LiveViewPageState extends State<LiveViewPage>
                 ],
               ),
             ),
-            // Positioned(
-            //   top: 10,
-            //   right: 20,
-            //   child: Container(
-            //     height: 50,
-            //     width: 120,
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(20),
-            //       gradient: LinearGradient(
-            //         colors: [Colors.blue.shade300, Palette.blueColor],
-            //       ),
-            //     ),
-            //     child: Center(
-            //       child: Text(
-            //         "00:00:00",
-            //         style: GoogleFonts.montserrat(
-            //           fontSize: 20,
-            //           fontWeight: FontWeight.w500,
-            //           color: Palette.whiteColor,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Positioned(
               left: 20,
               top: 10,
@@ -256,6 +323,82 @@ class _LiveViewPageState extends State<LiveViewPage>
                         )
                       ],
                     )
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              bottom: 110,
+              child: Container(
+                width: 200,
+                height: 300,
+                child: ListView.builder(
+                  reverse: true, // Reverse the order of children
+                  itemCount: listMsg.length > 4
+                      ? 4
+                      : listMsg.length, // Show maximum 4 messages
+                  itemBuilder: (context, index) {
+                    final int reversedIndex = listMsg.length - 1 - index;
+                    return MsgWidget(
+                      msg: listMsg[reversedIndex].msg,
+                      username: listMsg[reversedIndex].username,
+                    );
+                  },
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 40,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                height: 70,
+                width: MediaQuery.of(context).size.width,
+                color: Palette.backgroundColor,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _liveMsgController,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Palette.greyColor,
+                        ),
+                        cursorColor: Palette.blueColor,
+                        decoration: InputDecoration(
+                          hintText: "Comments",
+                          hintStyle: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Palette.greyColor,
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Palette.greyColor),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    GestureDetector(
+                      child: const Icon(
+                        Icons.send,
+                        color: Palette.blueColor,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        String msg = _liveMsgController.text;
+                        if (msg.isNotEmpty) {
+                          sendMsg(auctionId!, _liveMsgController.text,
+                              socketUsername);
+                          _liveMsgController.clear();
+                          print(listMsg);
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -419,6 +562,7 @@ class _LiveViewPageState extends State<LiveViewPage>
       }
     });
     getOneAuction();
+    getUserSocket();
   }
 
   void onStopStreamingButtonPressed() {

@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:bidsure_2/components/my_AppBar.dart';
 import 'package:bidsure_2/components/palette.dart';
+import 'package:bidsure_2/model/live_msg_model.dart';
+import 'package:bidsure_2/model/msg_widget.dart';
 import 'package:bidsure_2/pages/home_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lecle_yoyo_player/lecle_yoyo_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
 class BidderLiveAuction extends StatefulWidget {
@@ -37,6 +40,9 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
   Timer? _timer;
   int socketUserId = 0;
   String socketUsername = "";
+  IO.Socket? socket;
+  List<LiveMsgModel> listMsg = [];
+  TextEditingController _liveMsgController = TextEditingController();
 
   @override
   void initState() {
@@ -44,6 +50,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     getBalance();
     getUserSocket();
     super.initState();
+    connect();
     // _timer = Timer.periodic(Duration(seconds: 5), (timer) {
     //   // Update the UI by calling setState
     //   setState(() {
@@ -66,6 +73,15 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
       );
       if (response.statusCode == 200) {
         print(response.body);
+        final jsonData = jsonDecode(response.body);
+        final id = jsonData['userId'];
+        final username = jsonData['username'];
+        setState(() {
+          socketUsername = username;
+          socketUserId = id;
+          print(socketUserId);
+          print(socketUsername);
+        });
       }
     }
   }
@@ -192,6 +208,61 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     }
   }
 
+  void connect() {
+    socket = IO.io("http://localhost:3000", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    socket!.connect();
+    socket!.onConnect((_) {
+      print("frontend connected");
+      socket!.on("sendMsgServer", (msg) {
+        print("Received message: $msg");
+        try {
+          if (msg != null && msg is Map<String, dynamic>) {
+            final int id = msg['id'];
+            final String? username = msg['username'];
+            final String? receivedMsg = msg['msg'];
+            if (username != null &&
+                receivedMsg != null &&
+                msg["userId"] != socketUserId &&
+                msg["id"] == widget.id) {
+              setState(() {
+                listMsg.add(LiveMsgModel(
+                  id: id,
+                  msg: receivedMsg,
+                  username: username,
+                ));
+              });
+            } else {
+              print(
+                  "One of the properties is null: , sender=$username, receivedMsg=$receivedMsg");
+            }
+          } else {
+            print("Invalid message format: $msg");
+          }
+        } catch (e, stackTrace) {
+          print("Error processing message: $e");
+          print(stackTrace);
+        }
+      });
+    });
+  }
+
+  void sendMsg(int id, String msg, String userName) {
+    LiveMsgModel ownMsg = LiveMsgModel(id: id, msg: msg, username: userName);
+    listMsg.add(ownMsg);
+    setState(() {
+      listMsg;
+    });
+    socket!.emit('sendMsg', {
+      "id": id,
+      "msg": msg,
+      "username": userName,
+      "userId": socketUserId,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,6 +292,27 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
                 url: "http://192.168.1.43:8000/live/test/index.m3u8",
               ),
               Positioned(
+                left: 0,
+                bottom: 80,
+                child: Container(
+                  width: 200,
+                  height: 300,
+                  child: ListView.builder(
+                    reverse: true, // Reverse the order of children
+                    itemCount: listMsg.length > 4
+                        ? 4
+                        : listMsg.length, // Show maximum 4 messages
+                    itemBuilder: (context, index) {
+                      final int reversedIndex = listMsg.length - 1 - index;
+                      return MsgWidget(
+                        msg: listMsg[reversedIndex].msg,
+                        username: listMsg[reversedIndex].username,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 child: Container(
                   padding:
@@ -232,6 +324,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: _liveMsgController,
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -260,6 +353,15 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
                           color: Palette.blueColor,
                           size: 30,
                         ),
+                        onTap: () {
+                          String msg = _liveMsgController.text;
+                          if (msg.isNotEmpty) {
+                            sendMsg(widget.id, _liveMsgController.text,
+                                socketUsername);
+                            _liveMsgController.clear();
+                            print(listMsg);
+                          }
+                        },
                       ),
                     ],
                   ),
