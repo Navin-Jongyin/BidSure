@@ -60,14 +60,14 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/auction/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
-      final baseUrl = 'http://192.168.1.43:3000';
+      final baseUrl = 'https://bidsure-backend.onrender.com';
       imageUrl = baseUrl;
 
       if (response.statusCode == 200) {
@@ -119,14 +119,14 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/auction/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
-      final baseUrl = 'http://192.168.1.43:3000';
+      final baseUrl = 'https://bidsure-backend.onrender.com';
       imageUrl = baseUrl;
 
       if (response.statusCode == 200) {

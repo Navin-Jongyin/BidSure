@@ -50,7 +50,7 @@ class _MyAuctionState extends State<MyAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -59,7 +59,7 @@ class _MyAuctionState extends State<MyAuction> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.43:3000/';
+        final baseUrl = 'https://bidsure-backend.onrender.com/';
         final jsonData = jsonDecode(response.body);
         final username = jsonData['username'];
 
@@ -77,7 +77,8 @@ class _MyAuctionState extends State<MyAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/deleteauction';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/auction/deleteauction';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -96,7 +97,7 @@ class _MyAuctionState extends State<MyAuction> {
   }
 
   Future<void> getHighestPrice(int index) async {
-    String apiUrl = 'http://192.168.1.43:3000/bidding';
+    String apiUrl = 'https://bidsure-backend.onrender.com/bidding';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -134,7 +135,8 @@ class _MyAuctionState extends State<MyAuction> {
     int auction = auctionId;
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = "http://192.168.1.43:3000/transection/createtransection";
+      String apiUrl =
+          "https://bidsure-backend.onrender.com/transection/createtransection";
       final response = await http.post(Uri.parse(apiUrl),
           headers: {
             'Authorization': "Bearer $token",
@@ -159,7 +161,7 @@ class _MyAuctionState extends State<MyAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/auction/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -167,7 +169,7 @@ class _MyAuctionState extends State<MyAuction> {
         },
       );
       print(response.body);
-      final baseUrl = 'http://192.168.1.43:3000';
+      final baseUrl = 'https://bidsure-backend.onrender.com';
       imageUrl = baseUrl;
 
       if (response.statusCode == 200) {

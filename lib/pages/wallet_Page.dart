@@ -36,7 +36,8 @@ class _WalletPageState extends State<WalletPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/topup/walletbalance';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/topup/walletbalance';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {

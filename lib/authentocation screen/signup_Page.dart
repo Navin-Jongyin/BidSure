@@ -29,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
     String password,
     String confirmPassword,
   ) async {
-    String apiUrl = 'http://192.168.1.43:3000/auth/signup';
+    String apiUrl = 'https://bidsure-backend.onrender.com/auth/signup';
     final Map<String, dynamic> userData = {
       'fullname': name,
       'username': username,

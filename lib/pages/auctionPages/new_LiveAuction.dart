@@ -44,7 +44,7 @@ class _NewLiveAuctionState extends State<NewLiveAuction> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      var apiUrl = Uri.parse('http://192.168.1.43:3000/auction/');
+      var apiUrl = Uri.parse('https://bidsure-backend.onrender.com/auction/');
       var request = http.MultipartRequest('POST', apiUrl);
 
       // Add text fields to the request

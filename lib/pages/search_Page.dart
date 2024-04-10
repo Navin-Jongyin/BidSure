@@ -41,7 +41,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void getData() async {
-    String apiUrl = "http://192.168.1.43:3000/user/alluseridandusername";
+    String apiUrl =
+        "https://bidsure-backend.onrender.com/user/alluseridandusername";
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
@@ -66,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -75,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.43:3000';
+        final baseUrl = 'https://bidsure-backend.onrender.com';
         final jsonData = jsonDecode(response.body);
         final List<dynamic> following = jsonData['following'];
         final List<dynamic> follower = jsonData['follower'];
@@ -100,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
   void followUser(String userId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String apiUrl = "http://192.168.1.43:3000/user/follow";
+    String apiUrl = "https://bidsure-backend.onrender.com/user/follow";
     final response = await http.patch(
       Uri.parse(apiUrl),
       headers: {
@@ -130,7 +131,7 @@ class _SearchPageState extends State<SearchPage> {
   void unfollowUser(String userId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String apiUrl = "http://192.168.1.43:3000/user/unfollow";
+    String apiUrl = "https://bidsure-backend.onrender.com/user/unfollow";
     final response = await http.patch(
       Uri.parse(apiUrl),
       headers: {
@@ -162,12 +163,13 @@ class _SearchPageState extends State<SearchPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final response = await http.get(
-        Uri.parse('http://192.168.1.43:3000/user/alluseridandusername?q='),
+        Uri.parse(
+            'https://bidsure-backend.onrender.com/user/alluseridandusername?q='),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
-      final baseUrl = 'http://192.168.1.43:3000';
+      final baseUrl = 'https://bidsure-backend.onrender.com';
       imageUrl = baseUrl;
 
       if (response.statusCode == 200) {

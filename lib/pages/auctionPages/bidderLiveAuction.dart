@@ -64,7 +64,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/getusersocket';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/getusersocket';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -90,7 +90,8 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/getauctioninfo';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/auction/getauctioninfo';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -130,7 +131,8 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/bidding/createbidding';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/bidding/createbidding';
 
       print(_priceController.text + "ASd");
       final response = await http.post(
@@ -155,7 +157,7 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
   }
 
   Future<void> getHighestPrice() async {
-    String apiUrl = 'http://192.168.1.43:3000/bidding';
+    String apiUrl = 'https://bidsure-backend.onrender.com/bidding';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -189,7 +191,8 @@ class _BidderLiveAuctionState extends State<BidderLiveAuction> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/topup/walletbalance';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/topup/walletbalance';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {

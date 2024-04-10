@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.43:3000/';
+        final baseUrl = 'https://bidsure-backend.onrender.com/';
         final jsonData = jsonDecode(response.body);
         final name = jsonData['fullname'];
         final username = jsonData['username'];
@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
       if (response.statusCode == 200) {
         print(response.body);
-        final baseUrl = 'http://192.168.1.43:3000';
+        final baseUrl = 'https://bidsure-backend.onrender.com';
         final jsonData = jsonDecode(response.body);
         final name = jsonData['fullname'];
         final pic = jsonData['image'];

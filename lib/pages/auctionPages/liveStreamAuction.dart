@@ -56,7 +56,7 @@ class _LiveViewPageState extends State<LiveViewPage>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/user/getusersocket';
+      String apiUrl = 'https://bidsure-backend.onrender.com/user/getusersocket';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -82,7 +82,8 @@ class _LiveViewPageState extends State<LiveViewPage>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/deleteauction';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/auction/deleteauction';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -104,7 +105,8 @@ class _LiveViewPageState extends State<LiveViewPage>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/auction/getliveauctioninfo';
+      String apiUrl =
+          'https://bidsure-backend.onrender.com/auction/getliveauctioninfo';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {

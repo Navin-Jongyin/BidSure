@@ -56,7 +56,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       return;
     }
 
-    const apiUrl = "http://192.168.1.43:3000/user/changepassword";
+    const apiUrl = "https://bidsure-backend.onrender.com/user/changepassword";
     final response = await http.patch(
       Uri.parse(apiUrl),
       body: json.encode({

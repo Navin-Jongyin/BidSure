@@ -41,7 +41,7 @@ class _EditBioState extends State<EditBio> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = "http://192.168.1.43:3000/user/updatebio";
+      String apiUrl = "https://bidsure-backend.onrender.com/user/updatebio";
       final response = await http.patch(
         Uri.parse(apiUrl),
         headers: {

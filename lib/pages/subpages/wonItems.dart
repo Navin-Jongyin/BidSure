@@ -27,7 +27,7 @@ class _WonItemState extends State<WonItem> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
-      String apiUrl = 'http://192.168.1.43:3000/transection/';
+      String apiUrl = 'https://bidsure-backend.onrender.com/transection/';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
